@@ -50,12 +50,12 @@ def testroomstatus(roomid):
         testroomstatus(roomid)
 
 def savestream(roomid,streams,objstr):
-    if 'middle' in streams.keys():
-        p='middle'
+    if 'source' in streams.keys():
+        p='source'
     elif 'best' in streams.keys():
         p='best'
-    elif 'source' in streams.keys():
-        p='source'
+    elif 'middle' in streams.keys():
+        p='middle'
     else:
         p=streams.keys()[0]
     print('save '+p+'#'+objstr)
@@ -86,7 +86,7 @@ def main():
         #get steams
         streams=getStream('71415')
         savestream('71415',streams,objstr.replace(' ','_'))
-        
+
     except Exception,e:
         print('*restart*')
         print(e)
