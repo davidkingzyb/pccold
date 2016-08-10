@@ -17,6 +17,7 @@ roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
 myemail="davidkingzyb@163.com"
 path="./download/"
+roomid="kpc"
 
 
 import livestreamer
@@ -26,6 +27,21 @@ import json
 import datetime
 import time
 import subprocess
+import threading
+import sys
+import logging
+
+#log set
+logging.basicConfig(level=logging.DEBUG,
+                format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%H:%M:%S',
+                filename='pccold.log',
+                filemode='w')
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(name)-12s: %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 date=datetime.datetime.now().strftime('%Y_%m_%d')
 
@@ -34,7 +50,7 @@ def getStream(roomid):
     if len(streams)>0:
         return streams
     else:
-        print('no streams')
+        logging.info('no streams')
         time.sleep(10)
         main()
         
@@ -43,9 +59,11 @@ def testroomstatus(roomid):
     resp=spiderman.spider(roomapi+str(roomid))
     obj=json.loads(resp)
     if obj['data']['room_status']=='1':
-        print(str(date)+'test room status on(1) roomid='+roomid)
+        logging.info(str(date)+'test room status on(1) roomid='+roomid)
         return obj
     else:
+        sys.stdout.write('-')
+        sys.stdout.flush()
         time.sleep(60)
         testroomstatus(roomid)
 
@@ -58,38 +76,41 @@ def savestream(roomid,streams,objstr):
         p='middle'
     else:
         p=streams.keys()[0]
-    print('save '+p+'#'+objstr)
+    logging.info('save '+p+'#'+objstr)
     now=datetime.datetime.now().strftime('_%I_%M')
     filename=objstr+now+'.mp4'
     cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p
-    print('do '+cmd)
+    logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
     time.sleep(60)
+    t=threading.Thread(target=main)
+    t.start()
+    time.sleep(15)
     shell.kill()
-    savestream(roomid,streams,objstr)
+    logging.info('save '+filename)
 
 
 def main():
     try:
-        obj=testroomstatus('71415')
+        obj=testroomstatus(roomid)
         
         #sendEmail
         try:
             objstr=obj['data']['owner_name']+'_'+obj['data']['start_time']+'_'+obj['data']['room_id']
             body='from pccold project by DKZ\n\n'+objstr
             sendEmail.sendEmail(objstr,myemail,body)
-            print('send email to '+myemail)
+            logging.info('send email to '+myemail)
         except Exception,e:
-            print('*fail send email*')
-            print(e)
+            logging.warning('*fail send email*')
+            logging.warning(e)
         
         #get steams
-        streams=getStream('71415')
-        savestream('71415',streams,objstr.replace(' ','_'))
+        streams=getStream(roomid)
+        savestream(roomid,streams,objstr.replace(' ','_'))
 
     except Exception,e:
-        print('*restart*')
-        print(e)
+        logging.warning('*restart*')
+        logging.warning(e)
         time.sleep(60)
         main()
     
@@ -99,6 +120,7 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.info('====start pccold '+date+'====')
     main()
 
 
