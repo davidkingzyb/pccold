@@ -13,11 +13,15 @@
 
 """
 
+path="./download/"
+roomid="cold"
+howlong=60*30 #30min
+# roomid="kpc"
+
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
 myemail="davidkingzyb@163.com"
-path="./download/"
-roomid="kpc"
+
 
 
 import livestreamer
@@ -30,6 +34,7 @@ import subprocess
 import threading
 import sys
 import logging
+
 
 #log set
 logging.basicConfig(level=logging.DEBUG,
@@ -53,6 +58,7 @@ def getStream(roomid):
         logging.info('no streams')
         time.sleep(10)
         main()
+        return
         
 
 def testroomstatus(roomid):
@@ -64,8 +70,10 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
-        time.sleep(60)
-        testroomstatus(roomid)
+        time.sleep(30)
+        t=threading.Thread(target=main)
+        t.start()
+        return
 
 def savestream(roomid,streams,objstr):
     if 'source' in streams.keys():
@@ -82,10 +90,10 @@ def savestream(roomid,streams,objstr):
     cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p
     logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
-    time.sleep(60)
+    time.sleep(howlong)
     t=threading.Thread(target=main)
     t.start()
-    time.sleep(15)
+    time.sleep(10)
     shell.kill()
     logging.info('save '+filename)
 
@@ -93,20 +101,22 @@ def savestream(roomid,streams,objstr):
 def main():
     try:
         obj=testroomstatus(roomid)
-        
-        #sendEmail
-        try:
-            objstr=obj['data']['owner_name']+'_'+obj['data']['start_time']+'_'+obj['data']['room_id']
-            body='from pccold project by DKZ\n\n'+objstr
-            sendEmail.sendEmail(objstr,myemail,body)
-            logging.info('send email to '+myemail)
-        except Exception,e:
-            logging.warning('*fail send email*')
-            logging.warning(e)
-        
-        #get steams
-        streams=getStream(roomid)
-        savestream(roomid,streams,objstr.replace(' ','_'))
+
+        if obj:   
+            #sendEmail
+            try:
+                objstr=obj['data']['owner_name']+'_'+obj['data']['start_time']+'_'+obj['data']['room_id']
+                body='from pccold project by DKZ\n\n'+objstr
+                sendEmail.sendEmail(objstr,myemail,body)
+                logging.info('send email to '+myemail)
+            except Exception,e:
+                logging.warning('*fail send email*')
+                logging.warning(e)
+            
+            #get steams
+            streams=getStream(roomid)
+            if streams:
+                savestream(roomid,streams,objstr.replace(' ','_'))
 
     except Exception,e:
         logging.warning('*restart*')
