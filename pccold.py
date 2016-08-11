@@ -15,14 +15,14 @@
 
 path="/media/usbhdd/colddownload/"
 roomid="cold"
-howlong=60*30 #30min
+howlong=60 #30min
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
 myemail="zaowuworld@163.com"
 
 # test
-# roomid="kpc"
+roomid="kpc"
 path="./download/"
 
 
