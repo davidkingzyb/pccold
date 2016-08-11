@@ -13,10 +13,10 @@
 
 """
 
-path="./download/"
+path="/media/usbhdd/colddownload/"
 roomid="cold"
-howlong=60*30 #30min
-# roomid="kpc"
+howlong=60 #30min
+roomid="kpc"
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
@@ -70,6 +70,7 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
+        logging.info('-')
         time.sleep(30)
         t=threading.Thread(target=main)
         t.start()
@@ -87,7 +88,7 @@ def savestream(roomid,streams,objstr):
     logging.info('save '+p+'#'+objstr)
     now=datetime.datetime.now().strftime('_%I_%M')
     filename=objstr+now+'.mp4'
-    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p
+    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p+' &'
     logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
     time.sleep(howlong)
