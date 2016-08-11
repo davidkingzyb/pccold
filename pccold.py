@@ -15,12 +15,15 @@
 
 path="/media/usbhdd/colddownload/"
 roomid="cold"
-howlong=60 #30min
-roomid="kpc"
+howlong=60*30 #30min
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
-myemail="davidkingzyb@163.com"
+myemail="zaowuworld@163.com"
+
+# test
+# roomid="kpc"
+path="./download/"
 
 
 
@@ -40,13 +43,13 @@ import logging
 logging.basicConfig(level=logging.DEBUG,
                 format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%H:%M:%S',
-                filename='pccold.log',
+                filename='coldlog.log',
                 filemode='w')
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(name)-12s: %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger('').addHandler(console)
 
 date=datetime.datetime.now().strftime('%Y_%m_%d')
 
@@ -88,7 +91,7 @@ def savestream(roomid,streams,objstr):
     logging.info('save '+p+'#'+objstr)
     now=datetime.datetime.now().strftime('_%I_%M')
     filename=objstr+now+'.mp4'
-    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p+' &'
+    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p#+' &'
     logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
     time.sleep(howlong)

@@ -3,3 +3,4 @@ download
 dkzsecret.py
 *.pyc
 *.log
+nohup.out
