@@ -73,7 +73,6 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
-        logging.info('-')
         time.sleep(30)
         t=threading.Thread(target=main)
         t.start()
