@@ -1,6 +1,5 @@
 ```
-
-$ sudo mount -t auto -o uid=pi,gid=pi /dev/sda2 /media/usbhdd
+$ sudo mount /dev/sda2 /media/usbhdd
 
 
 # start
