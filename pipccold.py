@@ -15,15 +15,15 @@
 
 path="/media/usbhdd/colddownload/"
 roomid="cold"
-howlong=60*30 #30min
+#howlong=60 #30min
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
 myemail="zaowuworld@163.com"
 
 # test
-# roomid="kpc"
-# path="./download/"
+#roomid="kpc"
+#path="./download/"
 
 
 
@@ -73,7 +73,6 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
-        logging.info('-')
         time.sleep(30)
         t=threading.Thread(target=main)
         t.start()
@@ -91,15 +90,16 @@ def savestream(roomid,streams,objstr):
     logging.info('save '+p+'#'+objstr)
     now=datetime.datetime.now().strftime('_%I_%M')
     filename=objstr+now+'.mp4'
-    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p#+' &'
+    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p
     logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
-    time.sleep(howlong)
-    t=threading.Thread(target=main)
-    t.start()
-    time.sleep(10)
-    shell.kill()
-    logging.info('save end'+filename)
+    #time.sleep(howlong)
+    #t=threading.Thread(target=main)
+    #t.start()
+    #time.sleep(10)
+    #shell.kill()
+    #kll=subprocess.Popen('kill -9 '+str(shell.pid),shell=True)
+    #logging.info('save end '+str(shell.pid)+' '+filename)
 
 
 def main():
