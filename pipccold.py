@@ -22,8 +22,8 @@ roomurl="http://www.douyutv.com/"
 myemail="zaowuworld@163.com"
 
 # test
-# roomid="kpc"
-# path="./download/"
+#roomid="kpc"
+#path="./download/"
 
 
 
@@ -90,7 +90,7 @@ def savestream(roomid,streams,objstr):
     logging.info('save '+p+'#'+objstr)
     now=datetime.datetime.now().strftime('_%I_%M')
     filename=objstr+now+'.mp4'
-    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p#+' &'
+    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p
     logging.info('do '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
     time.sleep(howlong)
@@ -98,7 +98,8 @@ def savestream(roomid,streams,objstr):
     t.start()
     time.sleep(10)
     shell.kill()
-    logging.info('save end'+filename)
+    kll=subprocess.Popen('kill -9 '+str(shell.pid+1),shell=True)
+    logging.info('save end '+str(shell.pid)+' '+filename)
 
 
 def main():
