@@ -15,5 +15,6 @@ $ ps aux | grep pccold
 $ ps aux | grep livestreamer
 $ kill -9 PID
 
-
+# tar
+$ tar -cv colddownload -f coldtar.tar
 ```
