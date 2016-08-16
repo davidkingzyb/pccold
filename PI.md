@@ -4,7 +4,7 @@ $ sudo mount /dev/sda2 /media/usbhdd
 
 # start
 
-$ nohup python pccold.py &
+$ nohup python pipccold.py &
 $ exit
 
 

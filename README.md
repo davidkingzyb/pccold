@@ -39,5 +39,10 @@ roomid="cold"        #room id
 
 ```
 $ python pccold.py
+
+# or
+$ nohup python pccold.py &
 ```
+
+**linux use pipccold.py**
 
