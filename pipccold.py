@@ -112,7 +112,6 @@ def savestream(roomid,streams,objstr):
 
 
 def main():
-    logging.info('do main')
     try:
         obj=testroomstatus(roomid)
 
