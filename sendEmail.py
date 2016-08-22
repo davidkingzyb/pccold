@@ -20,8 +20,22 @@ def sendEmail(subj,to,body):
     server.login(sender,pwd)
     server.sendmail(sender,to,msg.as_string())
     server.quit()
+    # print('send email to %s <%s> ok'%(to,subj))
 
-    print 'send email to %s <%s> ok'%(to,subj)
+pccoldfooter="\n\n这是一条冷布丁的自动开播提醒～\n请继续支持 @冷了个冷\n\n如需订阅或退订请联系我\n此外，这个项目有自动录冷冷的视频功能，不定期上传云盘\n\n"
+pccoldcontact="\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\ncontact:davidkingzyb@163.com  @__DKZ__\naboutme:http://davidkingzyb.github.io\n"
+
+def pccold(roomobj,to):
+    subj='[pccold]'+roomobj['data']['room_name']+'@'+roomobj['data']['owner_name']
+    body='\nroom_name:'+roomobj['data']['room_name']
+    body+='\nowner_name:'+roomobj['data']['owner_name']+'#'+roomobj['data']['room_id']
+    body+='\nstart_time:'+roomobj['data']['start_time']
+    body+='\ncate_name:'+roomobj['data']['cate_name']
+    body+='\nlink:http://www.douyutv.com/'+roomobj['data']['room_id']
+    #body+=pccoldfooter
+    body+=pccoldcontact
+    sendEmail(subj,to,body)
+
 
 def main():
     parser=optparse.OptionParser('-s <subj> -t <to> -m <msg>')
