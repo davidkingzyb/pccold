@@ -13,13 +13,13 @@
 
 """
 
-#path="/media/usbhdd/colddownload/"
-path="./download/"
+path="/media/usbhdd/colddownload/"
+#path="./download/"
 roomid="cold"
-streamtype='source'
+streamtype='middle'
 
 setHowLong=True
-pikll=False
+pikll=True
 howlong=60*30 #30min
 
 isSendMail=True
@@ -117,7 +117,6 @@ def savestream(roomid,streams,objstr):
 
 def main():
     global isSendMail
-    logging.info('do main')
     try:
         obj=testroomstatus(roomid)
 
