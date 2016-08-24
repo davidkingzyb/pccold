@@ -32,6 +32,7 @@ mailhost='stmpserver'
 
 path="./download/"   #your path
 roomid="cold"        #room id
+streamtype='middle'  
 
 setHowLong=True
 pikll=False          #linux kill livestreamer
@@ -74,9 +75,11 @@ $ tar -cv colddownload -f coldtar.tar
 $ umount /media/usbhdd
 ```
 
-**fix mp4 processbar use [ffmpeg](https://www.ffmpeg.org/) **
+**fix mp4 processbar use [ffmpeg](https://www.ffmpeg.org/)**
 
-`$ ffmpeg -i input.mp4 -t 00:31:00 output.mp4`
+```
+$ ffmpeg -i input.mp4 -t 00:31:00 output.mp4
+```
 
 
 
