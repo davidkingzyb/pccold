@@ -13,13 +13,13 @@
 
 """
 
-path="/media/usbhdd/colddownload/"
-#path="./download/"
+#path="/media/usbhdd/colddownload/"
+path="./download/"
 roomid="cold"
-streamtype='middle'
+streamtype='source'
 
 setHowLong=True
-pikll=True
+pikll=False
 howlong=60*30 #30min
 
 isSendMail=True
