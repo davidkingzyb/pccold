@@ -33,6 +33,12 @@ mailhost='stmpserver'
 path="./download/"   #your path
 roomid="cold"        #room id
 
+setHowLong=True
+pikll=False          #linux kill livestreamer
+howlong=60*30        #30min
+
+isSendMail=True      #send email
+
 ```
 
 ##Usage
@@ -45,4 +51,32 @@ $ nohup python pccold.py &
 ```
 
 **linux use pipccold.py**
+
+```
+# for pi
+
+$ sudo mount /dev/sda2 /media/usbhdd
+
+# start
+
+$ nohup python pipccold.py &
+$ exit
+
+# stop
+
+$ ps aux | grep pccold
+$ ps aux | grep livestreamer
+$ kill -9 PID
+
+# tar
+$ tar -cv colddownload -f coldtar.tar
+
+$ umount /media/usbhdd
+```
+
+**fix mp4 processbar use [ffmpeg](https://www.ffmpeg.org/) **
+
+`$ ffmpeg -i input.mp4 -t 00:31:00 output.mp4`
+
+
 
