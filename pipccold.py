@@ -22,12 +22,14 @@ setHowLong=True
 pikll=True
 howlong=60*30 #30min
 
+isSendMail=True
+
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
 myemail="zaowuworld@163.com"
 
-# test
-#roomid="kpc"
+
+#roomid="kpc"  #test
 
 
 
@@ -42,6 +44,7 @@ import subprocess
 import threading
 import sys
 import logging
+# import traceback
 
 
 #log set
@@ -78,6 +81,7 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
+        isSendMail=True
         time.sleep(60)
         t=threading.Thread(target=main)
         t.start()
@@ -112,24 +116,28 @@ def savestream(roomid,streams,objstr):
 
 
 def main():
+    global isSendMail
     try:
         obj=testroomstatus(roomid)
 
         if obj:   
             #sendEmail
+            objstr=obj['data']['room_name']+'_'+obj['data']['start_time']+'_'+obj['data']['owner_name']
+            
             try:
-                objstr=obj['data']['owner_name']+'_'+obj['data']['start_time']+'_'+obj['data']['room_id']
-                body='from pccold project by DKZ\n\n'+objstr
-                sendEmail.sendEmail(objstr,myemail,body)
-                logging.info('send email to '+myemail)
+                if isSendMail:
+                    sendEmail.pccold(obj,myemail)
+                    isSendMail=False
+                    logging.info('send email to '+myemail)
             except Exception,e:
                 logging.warning('*fail send email*')
                 logging.warning(e)
+                # traceback.print_exc()
             
             #get steams
             streams=getStream(roomid)
             if streams:
-                savestream(roomid,streams,objstr.replace(' ','_'))
+                savestream(roomid,streams,objstr.replace(' ','_').replace(':','_'))
 
     except Exception,e:
         logging.warning('*restart*')
