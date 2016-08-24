@@ -137,7 +137,7 @@ def main():
             #get steams
             streams=getStream(roomid)
             if streams:
-                savestream(roomid,streams,objstr.replace(' ','_'))
+                savestream(roomid,streams,objstr.replace(' ','_').replace(':','_'))
 
     except Exception,e:
         logging.warning('*restart*')
