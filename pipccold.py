@@ -81,6 +81,7 @@ def testroomstatus(roomid):
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
+        global isSendMail
         isSendMail=True
         time.sleep(60)
         t=threading.Thread(target=main)
