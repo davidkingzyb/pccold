@@ -8,12 +8,14 @@
 
 主播上线邮件通知，并且自动录制视频。
 
-power by [livestreamer](https://github.com/chrippa/livestreamer)
+power by [livestreamer](https://github.com/chrippa/livestreamer) or [you-get](https://github.com/soimort/you-get)
 
 ##Install
 
 - python2.7
 - [livestreamer](https://github.com/chrippa/livestreamer)
+- [you-get](https://github.com/soimort/you-get)
+- [ffmpeg](https://www.ffmpeg.org/)
 
 **use develope version [steven7851's plug](https://github.com/steven7851/livestreamer/blob/2ee1b8f72924c4aa40da700529af0bc4386f01c6/src/livestreamer/plugins/douyutv.py)**
 
@@ -30,9 +32,10 @@ mailhost='stmpserver'
 
 #pccold.py
 
-path="./download/"   #your path
+power='livestreamer' #or 'you-get'
+path="./download"    #your path
 roomid="cold"        #room id
-streamtype='middle'  
+streamtype='middle'  #livestreamer type
 
 setHowLong=True
 pikll=False          #linux kill livestreamer
@@ -68,6 +71,7 @@ $ exit
 $ ps aux | grep pccold
 $ ps aux | grep livestreamer
 $ kill -9 PID
+$ killall ffmpeg
 
 # tar
 $ tar -cv colddownload -f coldtar.tar

@@ -1,150 +1,57 @@
+#!/usr/bin/env python
+
+__all__ = ['douyutv_download']
+
+from ..common import *
+import json
 import hashlib
-import re
 import time
 import uuid
+import urllib.parse, urllib.request
 
-from livestreamer.plugin import Plugin
-from livestreamer.plugin.api import http, validate
-from livestreamer.plugin.api.utils import parse_json
-from livestreamer.stream import HTTPStream
+def douyutv_download(url, output_dir = '.', merge = True, info_only = False, **kwargs):
+    html = get_content(url)
+    room_id_patt = r'"room_id"\s*:\s*(\d+),'
+    room_id = match1(html, room_id_patt)
+    if room_id == "0":
+        room_id = url[url.rfind('/')+1:]
 
-USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36"
-MAPI_URL = "http://m.douyu.com/html5/live?roomId={0}"
-LAPI_URL = "http://www.douyu.com/lapi/live/getPlay/{0}"
-LAPI_SECRET = "A12Svb&%1UUmf@hC"
-SHOW_STATUS_ONLINE = 1
-SHOW_STATUS_OFFLINE = 2
-STREAM_WEIGHTS = {
-    "low": 540,
-    "middle": 720,
-    "source": 1080
-}
+    json_request_url = "http://m.douyu.com/html5/live?roomId=%s" % room_id
+    content = get_content(json_request_url)
+    data = json.loads(content)['data']
+    server_status = data.get('error',0)
+    if server_status is not 0:
+        raise ValueError("Server returned error:%s" % server_status)
 
-_url_re = re.compile("""
-    http(s)?://(www\.)?douyu.com
-    /(?P<channel>[^/]+)
-""", re.VERBOSE)
+    nowtime=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
+    title = data.get('room_name')+'_'+str(nowtime)
+    show_status = data.get('show_status')
+    if show_status is not "1":
+        raise ValueError("The live stream is not online! (Errno:%s)" % server_status)
 
-_json_re = re.compile(r"var\s*\$ROOM\s*=\s*({.+?});")
+    tt = int(time.time() / 60)
+    did = uuid.uuid4().hex.upper()
+    sign_content = '{room_id}{did}A12Svb&%1UUmf@hC{tt}'.format(room_id = room_id, did = did, tt = tt)
+    sign = hashlib.md5(sign_content.encode('utf-8')).hexdigest()
 
-_room_id_schema = validate.Schema(
-    validate.all(
-        validate.transform(_json_re.search),
-        validate.any(
-            None,
-            validate.all(
-                validate.get(1),
-                validate.transform(parse_json),
-                {
-                    "room_id": validate.any(
-                        validate.text,
-                        validate.transform(int)
-                    )
-                }
-            )
-        )
-    )
-)
+    json_request_url = "http://www.douyu.com/lapi/live/getPlay/%s" % room_id
+    payload = {'cdn': 'ws', 'rate': '0', 'tt': tt, 'did': did, 'sign': sign}
+    postdata = urllib.parse.urlencode(payload)
+    req = urllib.request.Request(json_request_url, postdata.encode('utf-8'))
+    with urllib.request.urlopen(req) as response:
+        content = response.read()
 
-_room_schema = validate.Schema(
-    {
-        "data": validate.any(None, {
-            "show_status": validate.all(
-                validate.text,
-                validate.transform(int)
-            )
-        })
-    },
-    validate.get("data")
-)
+    data = json.loads(content.decode('utf-8'))['data']
+    server_status = data.get('error',0)
+    if server_status is not 0:
+        raise ValueError("Server returned error:%s" % server_status)
 
-_lapi_schema = validate.Schema(
-    {
-        "data": validate.any(None, {
-            "rtmp_url": validate.text,
-            "rtmp_live": validate.text
-        })
-    },
-    validate.get("data")
-)
+    real_url = data.get('rtmp_url')+'/'+data.get('rtmp_live')
 
+    print_info(site_info, title, 'flv', float('inf'))
+    if not info_only:
+        download_url_ffmpeg(real_url, title, 'flv', None, output_dir = output_dir, merge = merge)
 
-class Douyutv(Plugin):
-    @classmethod
-    def can_handle_url(self, url):
-        return _url_re.match(url)
-
-    @classmethod
-    def stream_weight(cls, stream):
-        if stream in STREAM_WEIGHTS:
-            return STREAM_WEIGHTS[stream], "douyutv"
-
-        return Plugin.stream_weight(stream)
-
-    def _get_streams(self):
-        match = _url_re.match(self.url)
-        channel = match.group("channel")
-
-        http.headers.update({"User-Agent": USER_AGENT})
-        room_id = http.get(self.url, schema=_room_id_schema)
-        channel = room_id["room_id"]
-        res = http.get(MAPI_URL.format(channel))
-        room = http.json(res, schema=_room_schema)
-        if not room:
-            return
-
-        if room["show_status"] != SHOW_STATUS_ONLINE:
-            return
-
-        ts = int(time.time() / 60)
-        did = uuid.uuid4().hex.upper()
-        sign = hashlib.md5(("{0}{1}{2}{3}".format(channel, did, LAPI_SECRET, ts)).encode("utf-8")).hexdigest()
-
-        data = {
-            "cdn": "ws",
-            "rate": "0",
-            "tt": ts,
-            "did": did,
-            "sign": sign
-        }
-
-        res = http.post(LAPI_URL.format(channel), data=data)
-        room = http.json(res, schema=_lapi_schema)
-
-        url = "{room[rtmp_url]}/{room[rtmp_live]}".format(room=room)
-        stream = HTTPStream(self.session, url)
-        yield "source", stream
-
-        data = {
-            "cdn": "ws",
-            "rate": "2",
-            "tt": ts,
-            "did": did,
-            "sign": sign
-        }
-
-        res = http.post(LAPI_URL.format(channel), data=data)
-        room = http.json(res, schema=_lapi_schema)
-
-        url = "{room[rtmp_url]}/{room[rtmp_live]}".format(room=room)
-        stream = HTTPStream(self.session, url)
-        yield "middle", stream
-
-        data = {
-            "cdn": "ws",
-            "rate": "1",
-            "tt": ts,
-            "did": did,
-            "sign": sign
-        }
-
-        res = http.post(LAPI_URL.format(channel), data=data)
-        room = http.json(res, schema=_lapi_schema)
-
-        url = "{room[rtmp_url]}/{room[rtmp_live]}".format(room=room)
-        stream = HTTPStream(self.session, url)
-        yield "low", stream
-
-__plugin__ = Douyutv
-
-
+site_info = "douyu.com"
+download = douyutv_download
+download_playlist = playlist_not_supported('douyu')

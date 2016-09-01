@@ -5,7 +5,7 @@ import dkzsecret
 import optparse
 
 host=dkzsecret.mailhost
-port=25
+port=25 #exmail.qq 465
 sender=dkzsecret.mailsender
 pwd=dkzsecret.mailpwd
 
