@@ -12,9 +12,11 @@
 2016/08/08 by DKZ https://davidkingzyb.github.io
 
 """
+power="livestreamer"
+# power="you-get"
 
-path="/media/usbhdd/colddownload/"
-#path="./download/"
+path="/media/usbhdd/colddownload"
+#path="./download"
 roomid="cold"
 streamtype='middle'
 
@@ -38,17 +40,18 @@ import livestreamer
 import sendEmail
 import spiderman
 import json
-import datetime
 import time
 import subprocess
 import threading
 import sys
 import logging
+import os
+import signal
 # import traceback
 
 
 #log set
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%H:%M:%S',
                 filename='coldlog.log',
@@ -59,8 +62,7 @@ logging.basicConfig(level=logging.DEBUG,
 # console.setFormatter(formatter)
 # logging.getLogger('').addHandler(console)
 
-date=datetime.datetime.now().strftime('%Y_%m_%d')
-
+date=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
 def getStream(roomid):
     streams = livestreamer.streams(roomurl+str(roomid))
     if len(streams)>0:
@@ -88,7 +90,7 @@ def testroomstatus(roomid):
         t.start()
         return
 
-def savestream(roomid,streams,objstr):
+def savelivestreamer(roomid,streams,objstr):
     if streamtype in streams.keys():
         p=streamtype
     elif 'source' in streams.keys():
@@ -96,11 +98,11 @@ def savestream(roomid,streams,objstr):
     else:
         p=streams.keys()[0]
     logging.info('save '+p+'#'+objstr)
-    now=datetime.datetime.now().strftime('_%I_%M')
+    now=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
     filename=objstr+now+'.mp4'
-    cmd='livestreamer -o "'+path+filename+'" '+roomurl+roomid+' '+p#+' &'
-    logging.info('do '+cmd)
+    cmd='livestreamer -o "'+path+'/'+filename+'" '+roomurl+roomid+' '+p#+' &'
     shell=subprocess.Popen(cmd,shell=True)
+    logging.info('do:'+cmd+' pid:'+str(shell.pid))
 
     if setHowLong:
         # time limit
@@ -113,7 +115,21 @@ def savestream(roomid,streams,objstr):
         if pikll:
             # pi
             kll=subprocess.Popen('kill -9 '+str(shell.pid+1),shell=True)
-    
+
+
+def saveyouget(roomid):
+    cmd='you-get -o '+path+' '+roomurl+roomid
+    shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    logging.info('do:'+cmd+' pid:'+str(shell.pid))
+    if setHowLong:
+        time.sleep(howlong)
+        t=threading.Thread(target=main)
+        t.start()
+        time.sleep(15)
+        # shell.kill()
+        os.killpg(os.getpgid(shell.pid),signal.SIGTERM)
+        logging.info('save end '+str(shell.pid))
+
 
 
 def main():
@@ -123,8 +139,10 @@ def main():
 
         if obj:   
             #sendEmail
-            objstr=obj['data']['room_name']+'_'+obj['data']['start_time']+'_'+obj['data']['owner_name']
-            
+            objstr=obj['data']['room_name']  #+'_'+obj['data']['start_time']+'_'+obj['data']['owner_name']
+            logging.info('====================== info ==========================')
+            logging.info('[pccold]'+obj['data']['room_name']+'    @ '+obj['data']['owner_name']+' # '+obj['data']['start_time']);
+            logging.info('======================================================')
             try:
                 if isSendMail:
                     sendEmail.pccold(obj,myemail)
@@ -135,10 +153,15 @@ def main():
                 logging.warning(e)
                 # traceback.print_exc()
             
-            #get steams
-            streams=getStream(roomid)
-            if streams:
-                savestream(roomid,streams,objstr.replace(' ','_').replace(':','_'))
+            if power=='livestreamer':
+                #get steams
+                streams=getStream(roomid)
+                if streams:
+                    savelivestreamer(roomid,streams,objstr.replace(' ','_').replace(':','_'))
+            elif power=='you-get':
+                #you-get
+                saveyouget(roomid)
+
 
     except Exception,e:
         logging.warning('*restart*')
