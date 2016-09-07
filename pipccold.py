@@ -15,14 +15,15 @@
 power="livestreamer"
 # power="you-get"
 
-path="/media/usbhdd/colddownload"
+#path="/media/usbhdd/colddownload"
 #path="./download"
+path="/media/pi/ttt/colddownload"
 roomid="cold"
 streamtype='middle'
 
 setHowLong=True
 pikll=True
-howlong=60 #30min
+howlong=60*30 #30min
 
 isSendMail=True
 
@@ -31,7 +32,7 @@ roomurl="http://www.douyutv.com/"
 myemail="zaowuworld@163.com"
 
 
-roomid="kpc"  #test
+#roomid="kpc"  #test
 
 
 
