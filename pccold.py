@@ -47,7 +47,7 @@ import sys
 import logging
 import os
 import signal
-# import traceback
+import traceback
 
 
 #log set
@@ -149,9 +149,12 @@ def main():
                     isSendMail=False
                     logging.info('send email to '+myemail)
             except Exception,e:
-                logging.warning('*fail send email*')
+                logging.warning('=========fail send email===============')
                 logging.warning(e)
                 # traceback.print_exc()
+                tb=traceback.format_exc()
+                logging.warning(tb)
+                logging.warning('---------------------------------------')
             
             if power=='livestreamer':
                 #get steams
@@ -164,8 +167,11 @@ def main():
 
 
     except Exception,e:
-        logging.warning('*restart*')
+        logging.warning('===========restart=========')
         logging.warning(e)
+        tb=traceback.format_exc()
+        logging.warning(tb)
+        logging.warning('---------------------------')
         time.sleep(60)
         main()
     
