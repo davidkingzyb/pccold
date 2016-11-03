@@ -18,7 +18,7 @@ power="livestreamer"
 #path="/media/usbhdd/colddownload"
 path="./download"
 roomid="cold"
-streamtype='source'
+streamtype='middle'
 
 setHowLong=True
 pikll=False
