@@ -25,6 +25,12 @@ def sendEmail(subj,to,body):
 pccoldfooter="\n\n这是一条冷布丁的自动开播提醒～\n请继续支持 @冷了个冷\n\n如需订阅或退订请联系我\n此外，这个项目有自动录冷冷的视频功能，不定期上传云盘\n\n"
 pccoldcontact="\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\ncontact:davidkingzyb@163.com  @__DKZ__\naboutme:http://davidkingzyb.github.io\n"
 
+testroomobj={'data':{'room_name':'pccold',
+'owner_name':'pccold',
+'start_time':'20160904',
+'cate_name':'dota',
+'room_id':'cold'}}
+
 def pccold(roomobj,to):
     subj='[pccold]'+roomobj['data']['room_name']+'@'+roomobj['data']['owner_name']
     body='\nroom_name:'+roomobj['data']['room_name']
