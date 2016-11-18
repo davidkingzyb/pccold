@@ -21,11 +21,11 @@ roomid="cold"
 streamtype='middle'
 
 setHowLong=True
-pikll=False
+pikll=True
 howlong=60*30 #30min
 
 isSendMail=True
-isBypy=False
+isBypy=True
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
@@ -90,8 +90,9 @@ def testroomstatus(roomid):
             isSendMail=True
             if isBypy:
                 try:
+                    date=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
                     logging.info('============$ bypy upload===========')
-                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log coldlog.log;bypy upload'
+                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log cold'+date+'.log;bypy upload'
                     logging.info(bypycmd)
                     shell=subprocess.Popen(bypycmd,shell=True)
                     logging.info('---------------bypy uploading-----------------')
