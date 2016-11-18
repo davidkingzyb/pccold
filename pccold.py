@@ -25,6 +25,7 @@ pikll=False
 howlong=60*30 #30min
 
 isSendMail=True
+isBypy=False
 
 roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
 roomurl="http://www.douyutv.com/"
@@ -84,7 +85,22 @@ def testroomstatus(roomid):
         sys.stdout.write('-')
         sys.stdout.flush()
         global isSendMail
-        isSendMail=True
+        global isBypy
+        if isSendMail==False:
+            isSendMail=True
+            if isBypy:
+                try:
+                    logging.info('============$ bypy upload===========')
+                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log coldlog.log;bypy upload'
+                    logging.info(bypycmd)
+                    shell=subprocess.Popen(bypycmd,shell=True)
+                    logging.info('---------------bypy uploading-----------------')
+                except Exception,e:
+                    logging.warning('========bypy upload fail=======')
+                    logging.warning(e)
+                    tb=traceback.format_exc()
+                    logging.warning(tb)
+                    logging.warning('---------------------------------------')
         time.sleep(60)
         t=threading.Thread(target=main)
         t.start()

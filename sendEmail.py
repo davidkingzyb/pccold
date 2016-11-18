@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 import dkzsecret
 import optparse
+import subprocess
 
 host=dkzsecret.mailhost
 port=25 #exmail.qq 465 or 25
@@ -42,6 +43,10 @@ def pccold(roomobj,to):
     body+=pccoldcontact
     sendEmail(subj,to,body)
 
+
+def dobypy():
+    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log coldlog.log;bypy upload'
+    shell=subprocess.Popen(bypycmd,shell=True)
 
 def main():
     parser=optparse.OptionParser('-s <subj> -t <to> -m <msg>')

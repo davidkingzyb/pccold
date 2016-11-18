@@ -54,31 +54,6 @@ $ python pccold.py
 $ nohup python pccold.py &
 ```
 
-**linux use pipccold.py**
-
-```
-# for pi
-
-$ sudo mount /dev/sda2 /media/usbhdd
-
-# start
-
-$ nohup python pipccold.py &
-$ exit
-
-# stop
-
-$ ps aux | grep pccold
-$ ps aux | grep livestreamer
-$ kill -9 PID
-$ killall ffmpeg
-
-# tar
-$ tar -cv colddownload -f coldtar.tar
-
-$ umount /media/usbhdd
-```
-
 **fix mp4 processbar use [ffmpeg](https://www.ffmpeg.org/)**
 
 ```
