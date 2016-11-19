@@ -79,6 +79,7 @@ def testroomstatus(roomid):
     resp=spiderman.spider(roomapi+str(roomid))
     obj=json.loads(resp)
     if obj['data']['room_status']=='1':
+        global date
         logging.info(str(date)+'test room status on(1) roomid='+roomid)
         return obj
     else:
@@ -90,9 +91,9 @@ def testroomstatus(roomid):
             isSendMail=True
             if isBypy:
                 try:
-                    date=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
+                    dates=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
                     logging.info('============$ bypy upload===========')
-                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log cold'+date+'.log;bypy upload'
+                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log cold'+dates+'.log;bypy upload'
                     logging.info(bypycmd)
                     shell=subprocess.Popen(bypycmd,shell=True)
                     logging.info('---------------bypy uploading-----------------')
