@@ -127,7 +127,7 @@ def savelivestreamer(roomid,streams,objstr):
         time.sleep(howlong)
         t=threading.Thread(target=main)
         t.start()
-        time.sleep(10)
+        time.sleep(60)
         shell.kill()
         logging.info('save end '+str(shell.pid)+' '+filename)
         if pikll:
