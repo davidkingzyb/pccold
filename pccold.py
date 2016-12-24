@@ -119,7 +119,7 @@ def savelivestreamer(roomid,streams,objstr):
     logging.info('save '+p+'#'+objstr)
     now=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
     filename=objstr+now+'.mp4'
-    filename=re.sub('[\/:*?"< >|]','',filename)
+    filename=re.sub(r'[\\/:*?"< >()|]','',filename)
     cmd='livestreamer -o "'+path+'/'+filename+'" '+roomurl+roomid+' '+p#+' &'
     shell=subprocess.Popen(cmd,shell=True)
     logging.info('do:'+cmd+' pid:'+str(shell.pid))
