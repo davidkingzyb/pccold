@@ -4,3 +4,4 @@ dkzsecret.py
 *.pyc
 *.log
 nohup.out
+.DS_Store
