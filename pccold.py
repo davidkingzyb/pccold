@@ -33,11 +33,11 @@ logging.basicConfig(level=logging.INFO,
                 datefmt='%H:%M:%S',
                 filename='coldlog.log',
                 filemode='w')
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(name)-12s: %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger('').addHandler(console)
 
 date_time=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
 
