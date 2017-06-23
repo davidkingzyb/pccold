@@ -8,7 +8,7 @@
 
 主播上线邮件通知，并且自动录制视频。
 
-##Install
+## Install
 
 - python2.7
 - [livestreamer](https://github.com/chrippa/livestreamer)

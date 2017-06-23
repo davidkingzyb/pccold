@@ -22,6 +22,7 @@ import os
 import signal
 import traceback
 import re
+import requests
 
 import conf
 import tools
@@ -59,7 +60,7 @@ def saveLiveStreamer(room_obj):
     else:
         level=streams.keys()[0]
     now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
-    room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'])
+    room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
     cmd='livestreamer -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
     # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
@@ -69,22 +70,21 @@ def saveLiveStreamer(room_obj):
         # sleepKiller(shell)
 
 def saveStreamLink(room_obj):
-    # import streamlink
-    # streams = streamlink.streams(conf.room_url+str(conf.room_id))
-    # if conf.stream_type in streams.keys():
-    #     level=conf.stream_type
-    # else:
-    #     level=streams.keys()[0]
-    level='middle'#test
+    import streamlink
+    streams = streamlink.streams(conf.room_url+str(conf.room_id))
+    if conf.stream_type in streams.keys():
+        level=conf.stream_type
+    else:
+        level=streams.keys()[0]
     now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
     room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
     cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
-    # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
     logging.info('==== save streamlink ====')
     logging.info('$ '+cmd)
-    # if conf.is_set_how_long:
-        # sleepKiller(shell)
+    if conf.is_set_how_long:
+        sleepKiller(shell)
         
 
 def sleepKiller(shell):
@@ -99,7 +99,8 @@ def sleepKiller(shell):
 
 
 def testRoomStatus():
-    resp=tools.spider(conf.room_api+str(conf.room_id))
+    # resp=tools.spider(conf.room_api+str(conf.room_id))
+    resp=requests.get(conf.room_api+str(conf.room_id)).text
     room_obj=json.loads(resp)
     if room_obj['data']['room_status']=='1':
         global date_time
