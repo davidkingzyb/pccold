@@ -1,6 +1,5 @@
 # coding: utf-8
 """
-
 ===================================================
                                                    
                                      __            
@@ -9,37 +8,10 @@
 |    ___||  |____ |  |____ |   o   ||  |_ |  ___  |
 |___|    |_______||_______| \_____/ |____||_______|
 ===================================================
-2016/08/08 by DKZ https://davidkingzyb.github.io
+2017/06/23 by DKZ https://davidkingzyb.github.io
 
 """
-power="livestreamer"
-# power="you-get"
 
-#path="/media/usbhdd/colddownload"
-path="./download"
-roomid="cold"
-streamtype='middle'
-
-setHowLong=True
-pikll=True
-howlong=60*30 #30min
-
-isSendMail=True
-isBypy=True
-
-roomapi='http://open.douyucdn.cn/api/RoomApi/room/'
-roomurl="http://www.douyutv.com/"
-myemail="zaowuworld@163.com"
-
-
-# roomid="kpc"  #test
-
-
-
-
-import livestreamer
-import sendEmail
-import spiderman
 import json
 import time
 import subprocess
@@ -51,6 +23,8 @@ import signal
 import traceback
 import re
 
+import conf
+import tools
 
 #log set
 logging.basicConfig(level=logging.INFO,
@@ -58,150 +32,133 @@ logging.basicConfig(level=logging.INFO,
                 datefmt='%H:%M:%S',
                 filename='coldlog.log',
                 filemode='w')
-# console = logging.StreamHandler()
-# console.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(name)-12s: %(message)s')
-# console.setFormatter(formatter)
-# logging.getLogger('').addHandler(console)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(name)-12s: %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
-date=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
-def getStream(roomid):
-    streams = livestreamer.streams(roomurl+str(roomid))
-    if len(streams)>0:
-        return streams
+date_time=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
+
+is_send_mail=conf.is_send_mail
+is_bypy=conf.is_bypy
+
+def saveYouGet(room_obj):
+    cmd='you-get -o '+conf.download_path+' '+conf.room_url+conf.room_id
+    # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    logging.info('==== save you-get ====')
+    logging.info('$ '+cmd+' @ pid:'+str(shell.pid))
+    # if conf.is_set_how_long:
+        # sleepKiller(shell)
+
+def saveLiveStreamer(room_obj):
+    import livestreamer
+    streams = livestreamer.streams(conf.room_url+str(conf.room_id))
+    if conf.stream_type in streams.keys():
+        level=conf.stream_type
     else:
-        logging.info('no streams')
-        time.sleep(10)
-        main()
-        return
+        level=streams.keys()[0]
+    now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
+    room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'])
+    file_name=room_name+now_time+'.mp4'
+    cmd='livestreamer -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
+    # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    logging.info('==== save livestreamer ====')
+    logging.info('$ '+cmd+' @ pid:'+str(shell.pid))
+    # if conf.is_set_how_long:
+        # sleepKiller(shell)
+
+def saveStreamLink(room_obj):
+    # import streamlink
+    # streams = streamlink.streams(conf.room_url+str(conf.room_id))
+    # if conf.stream_type in streams.keys():
+    #     level=conf.stream_type
+    # else:
+    #     level=streams.keys()[0]
+    level='middle'#test
+    now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
+    room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
+    file_name=room_name+now_time+'.mp4'
+    cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
+    # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    logging.info('==== save streamlink ====')
+    logging.info('$ '+cmd)
+    # if conf.is_set_how_long:
+        # sleepKiller(shell)
         
 
-def testroomstatus(roomid):
-    resp=spiderman.spider(roomapi+str(roomid))
-    obj=json.loads(resp)
-    if obj['data']['room_status']=='1':
-        global date
-        logging.info(str(date)+'test room status on(1) roomid='+roomid)
-        return obj
+def sleepKiller(shell):
+    time.sleep(conf.how_long)
+    t=threading.Thread(target=main)
+    t.start()
+    time.sleep(60)
+    os.killpg(os.getpgid(shell.pid),signal.SIGINT)
+    logging.info('save end '+str(shell.pid))
+    if conf.is_plus_kill:
+        kill=subprocess.Popen('kill -9 '+str(shell.pid+1),shell=True)
+
+
+def testRoomStatus():
+    resp=tools.spider(conf.room_api+str(conf.room_id))
+    room_obj=json.loads(resp)
+    if room_obj['data']['room_status']=='1':
+        global date_time
+        logging.info(str(date_time)+'test room status on(1) roomid='+conf.room_id)
+        return room_obj
     else:
         sys.stdout.write('-')
         sys.stdout.flush()
-        global isSendMail
-        global isBypy
-        if isSendMail==False:
-            isSendMail=True
-            if isBypy:
+        global is_send_mail
+        global is_bypy
+        if is_send_mail==False:
+            is_send_mail=True if conf.is_send_mail else False
+            if is_bypy:
                 try:
-                    dates=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
-                    logging.info('============$ bypy upload===========')
-                    bypycmd='cd ~/workspace/pccold/download;cp ../coldlog.log cold'+dates+'.log;bypy upload'
-                    logging.info(bypycmd)
-                    shell=subprocess.Popen(bypycmd,shell=True)
-                    logging.info('---------------bypy uploading-----------------')
+                    logging.info('==== bypy upload ====')
+                    tools.doBypy(conf.download_path)
                 except Exception,e:
-                    logging.warning('========bypy upload fail=======')
+                    logging.warning('*** bypy upload fail ***')
                     logging.warning(e)
                     tb=traceback.format_exc()
                     logging.warning(tb)
-                    logging.warning('---------------------------------------')
         time.sleep(60)
         t=threading.Thread(target=main)
         t.start()
         return
 
-def savelivestreamer(roomid,streams,objstr):
-    if streamtype in streams.keys():
-        p=streamtype
-    elif 'source' in streams.keys():
-        p='source'
-    else:
-        p=streams.keys()[0]
-    logging.info('save '+p+'#'+objstr)
-    now=time.strftime('%Y_%m_%d_%H_%M',time.localtime(time.time()))
-    filename=objstr+now+'.mp4'
-    filename=re.sub(r'[\\/:*?"< >()|]','',filename)
-    cmd='livestreamer -o "'+path+'/'+filename+'" '+roomurl+roomid+' '+p#+' &'
-    shell=subprocess.Popen(cmd,shell=True)
-    logging.info('do:'+cmd+' pid:'+str(shell.pid))
-
-    if setHowLong:
-        # time limit
-        time.sleep(howlong)
-        t=threading.Thread(target=main)
-        t.start()
-        time.sleep(60)
-        shell.kill()
-        logging.info('save end '+str(shell.pid)+' '+filename)
-        if pikll:
-            # pi
-            kll=subprocess.Popen('kill -9 '+str(shell.pid+1),shell=True)
-
-
-def saveyouget(roomid):
-    cmd='you-get -o '+path+' '+roomurl+roomid
-    shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
-    logging.info('do:'+cmd+' pid:'+str(shell.pid))
-    if setHowLong:
-        time.sleep(howlong)
-        t=threading.Thread(target=main)
-        t.start()
-        time.sleep(15)
-        # shell.kill()
-        os.killpg(os.getpgid(shell.pid),signal.SIGTERM)
-        logging.info('save end '+str(shell.pid))
-
-
-
-def main():
-    global isSendMail
+def main(): 
     try:
-        obj=testroomstatus(roomid)
-
-        if obj:   
-            #sendEmail
-            objstr=obj['data']['room_name']  #+'_'+obj['data']['start_time']+'_'+obj['data']['owner_name']
-            logging.info('====================== info ==========================')
-            logging.info('[pccold]'+obj['data']['room_name']+'    @ '+obj['data']['owner_name']+' # '+obj['data']['start_time']);
-            logging.info('======================================================')
+        room_obj=testRoomStatus()
+        if room_obj:
+            logging.info('[pccold]'+room_obj['data']['room_name']+' @ '+room_obj['data']['owner_name']+' # '+room_obj['data']['start_time']);
+            #send email
             try:
-                if isSendMail:
-                    sendEmail.pccold(obj,myemail)
-                    isSendMail=False
-                    logging.info('send email to '+myemail)
+                global is_send_mail
+                if is_send_mail:
+                    email_obj=tools.initPcColdEmail(room_obj)
+                    tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
+                    is_send_mail=False
+                    logging.info('send email to '+conf.my_email)
             except Exception,e:
-                logging.warning('=========fail send email===============')
+                logging.warning('*** fail send email ***')
                 logging.warning(e)
-                # traceback.print_exc()
                 tb=traceback.format_exc()
                 logging.warning(tb)
-                logging.warning('---------------------------------------')
-            
-            if power=='livestreamer':
-                #get steams
-                streams=getStream(roomid)
-                if streams:
-                    savelivestreamer(roomid,streams,objstr.replace(' ','_').replace(':','_'))
-            elif power=='you-get':
-                #you-get
-                saveyouget(roomid)
-
-
+            #save stream
+            if conf.power=='livestreamer':
+                saveLiveStreamer(room_obj)
+            elif conf.power=='you-get':
+                saveYouGet(room_obj)
+            elif conf.power=='streamlink':
+                saveStreamLink(room_obj)
     except Exception,e:
-        logging.warning('===========restart=========')
+        logging.warning('*** main fail ***')
         logging.warning(e)
         tb=traceback.format_exc()
         logging.warning(tb)
-        logging.warning('---------------------------')
         time.sleep(60)
         main()
-    
-
-
-    
-
 
 if __name__ == '__main__':
-    logging.info('====start pccold '+date+'====')
+    logging.info('==== start pccold '+date_time+' ====')
     main()
-
-

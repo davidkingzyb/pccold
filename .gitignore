@@ -5,3 +5,6 @@ dkzsecret.py
 *.log
 nohup.out
 .DS_Store
+old
+plugs
+conf.py
