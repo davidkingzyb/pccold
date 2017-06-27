@@ -78,7 +78,10 @@ def saveStreamLink(room_obj):
     if conf.stream_type in streams.keys():
         level=conf.stream_type
     else:
-        level=streams.keys()[0]
+        if len(streams.keys())>0:
+            level=streams.keys()[0]
+        else:
+            level='source'
     now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
     room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
