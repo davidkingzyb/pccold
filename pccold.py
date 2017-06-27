@@ -58,7 +58,10 @@ def saveLiveStreamer(room_obj):
     if conf.stream_type in streams.keys():
         level=conf.stream_type
     else:
-        level=streams.keys()[0]
+        if len(streams.keys())>0:
+            level=streams.keys()[0]
+        else:
+            level='source'
     now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
     room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
@@ -127,24 +130,28 @@ def testRoomStatus():
         t.start()
         return
 
+def sendEmails(room_obj):
+    try:
+        global is_send_mail
+        if is_send_mail:
+            email_obj=tools.initPcColdEmail(room_obj)
+            tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
+            is_send_mail=False
+            logging.info('send email to '+conf.my_email)
+    except Exception,e:
+        logging.warning('*** fail send email ***')
+        logging.warning(e)
+        tb=traceback.format_exc()
+        logging.warning(tb)
+
 def main(): 
+    logging.info('==== main start ====')
     try:
         room_obj=testRoomStatus()
         if room_obj:
             logging.info('[pccold]'+room_obj['data']['room_name']+' @ '+room_obj['data']['owner_name']+' # '+room_obj['data']['start_time']);
             #send email
-            try:
-                global is_send_mail
-                if is_send_mail:
-                    email_obj=tools.initPcColdEmail(room_obj)
-                    tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
-                    is_send_mail=False
-                    logging.info('send email to '+conf.my_email)
-            except Exception,e:
-                logging.warning('*** fail send email ***')
-                logging.warning(e)
-                tb=traceback.format_exc()
-                logging.warning(tb)
+            sendEmails(room_obj)
             #save stream
             if conf.power=='livestreamer':
                 saveLiveStreamer(room_obj)
