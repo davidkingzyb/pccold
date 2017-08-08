@@ -41,3 +41,11 @@ def spider(url,cookie='',ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) App
     resp=urllib2.urlopen(req)
     html=resp.read()
     return html
+
+def read(file):
+    with open(file,'r') as f:
+        return f.read()
+
+def write(file,str):
+    with open(file,'w') as f:
+        f.write(str)
