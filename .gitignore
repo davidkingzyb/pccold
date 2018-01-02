@@ -1,10 +1,8 @@
-livestreamer-develop
 download
-dkzsecret.py
 *.pyc
 *.log
 nohup.out
 .DS_Store
-old
 plugs
 conf.py
+node_modules
