@@ -6,3 +6,4 @@ nohup.out
 plugs
 conf.py
 node_modules
+__pycache__

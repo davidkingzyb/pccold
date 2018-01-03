@@ -26,6 +26,7 @@ import requests
 
 import conf
 import tools
+import streamlink
 
 #log set
 logging.basicConfig(level=logging.INFO,
@@ -41,20 +42,14 @@ logging.getLogger('').addHandler(console)
 
 def doStream(room_obj):
     logging.info('doStream')
-    hackStream(room_obj)
-    saveStream(conf.stream_type,room_obj)
-    
-
-def hackStream(room_obj):
-    logging.info('hackStream')
-    cmd='node pccold.js '+room_obj['data']['room_id']
-    shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    while True:  
-        buff = shell.stdout.readline()  
-        if buff == '' and shell.poll() != None:  
-            break
+    streams = streamlink.streams(conf.room_url+str(conf.room_id))
+    if conf.stream_type in streams.keys():
+        saveStream(conf.stream_type,room_obj)
+    else:
+        if len(streams.keys())>0:
+            saveStream(streams.keys()[0],room_obj)
         else:
-            print(buff)
+            saveStream('source',room_obj)
 
 
 def saveStream(level,room_obj):
@@ -71,7 +66,7 @@ def sleepKiller(shell):
     time.sleep(conf.how_long)
     t=threading.Thread(target=main)
     t.start()
-    time.sleep(60*2)
+    time.sleep(60)
     os.killpg(os.getpgid(shell.pid),signal.SIGINT)
     logging.info('save end '+str(shell.pid))
     if conf.is_plus_kill:
