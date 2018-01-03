@@ -34,11 +34,11 @@ logging.basicConfig(level=logging.INFO,
                 datefmt='%m/%d %H:%M:%S',
                 filename='coldlog.log',
                 filemode='w')
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
+#console = logging.StreamHandler()
+#console.setLevel(logging.INFO)
+#formatter = logging.Formatter('%(name)-12s: %(message)s')
+#console.setFormatter(formatter)
+#logging.getLogger('').addHandler(console)
 
 def doStream(room_obj):
     logging.info('doStream')
@@ -58,9 +58,9 @@ def saveStream(level,room_obj):
     room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
     cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
-    # shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
     logging.info('$ '+cmd)
-    # sleepKiller(shell)
+    sleepKiller(shell)
 
 def sleepKiller(shell):
     time.sleep(conf.how_long)
@@ -69,14 +69,12 @@ def sleepKiller(shell):
     time.sleep(60)
     os.killpg(os.getpgid(shell.pid),signal.SIGINT)
     logging.info('save end '+str(shell.pid))
-    if conf.is_plus_kill:
-        kill=subprocess.Popen('kill -9 '+str(shell.pid+1),shell=True)
 
 def sendEmails(room_obj):
     logging.info('sendEmails')
     try:
         email_obj=tools.initPcColdEmail(room_obj)
-        # tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
+        tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
     except Exception,e:
         logging.warning('*** fail send email')
         logging.warning(e)
@@ -88,7 +86,7 @@ def doBypy():
     date_time=time.strftime('_%Y_%m_%d_%H_%M',time.localtime(time.time()))
     cmd='cd '+conf.download_path+';cp ../coldlog.log coldlog'+date_time+'.log;bypy upload'
     logging.info('$ '+cmd)
-    # shell=subprocess.Popen(cmd,shell=True)
+    shell=subprocess.Popen(cmd,shell=True)
 
 is_live=False
 
