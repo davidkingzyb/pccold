@@ -29,7 +29,8 @@ def getRtmpUrl(req):
 def main():
     try: input = raw_input
     except NameError: pass
-    print('Enter getPlay req string:')
+    print('Block request http://www.douyu.com/lapi/live/getPlay/(roomid)')
+    print('Enter getPlay request query:')
     req=input()
     if req:
         rtmp_url=getRtmpUrl(req)
@@ -38,7 +39,7 @@ def main():
     else:
         tmpl=tools.read(conf.now_tmpl_path)
     tools.write(conf.douyutv_plug_path,tmpl)
-    print('\n\nok')
+    print('\n\n copy douyutv.py plug ok')
     print('streamlink http://www.douyutv.com/cold medium -o ')
 
 

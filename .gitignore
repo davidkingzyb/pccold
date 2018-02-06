@@ -1,7 +1,7 @@
 download
 *.pyc
 *.log
-nohup.out
+*.out
 .DS_Store
 plugs
 conf.py

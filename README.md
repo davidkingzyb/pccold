@@ -1,8 +1,8 @@
 # pccold
 
-**douyu 主播上线通知 & 视频自动录制**
+**douyu斗鱼 主播上线通知 & 视频自动录制 & 弹幕抓取**
 
-2018/1/4 by DKZ
+2018/2/6 by DKZ
 
 
 
@@ -20,6 +20,7 @@ conf.py
 
 ```
 room_id="cold"
+room_num=20360
 stream_type='medium'
 how_long=60*30 #30min
 
@@ -43,7 +44,10 @@ douyutv_plug_path='/Library/Python/2.7/site-packages/streamlink/plugins/douyutv.
 ## Usage
 
 ```
-$ nohup python pccold.py &
+$ sh run.sh
+
+# copy douyutv.py plug
+$ python manual.py
 ```
 
 
