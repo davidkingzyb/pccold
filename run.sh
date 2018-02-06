@@ -9,6 +9,7 @@ ps aux|grep bypy|awk '{print $2}'|xargs kill -9
 mv danmu.log download/danmu_${DATE}.log
 
 rm nohup.out
+rm coldlog.log
 
 nohup python pccold.py &
 nohup python3 danmu.py >/dev/null 2>&1 &
