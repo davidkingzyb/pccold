@@ -8,9 +8,8 @@ import json
 import conf
 
 def testRoomStatus():
-    resp=requests.get(conf.room_api+str(conf.room_id)).text
-    room_obj=json.loads(resp)
-    if room_obj['data']['room_status']=='1':
+    room_obj=requests.get(conf.room_api+str(conf.room_num)).json()
+    if room_obj.get('data',{'room_status':'0'}).get('room_status','0')=="1":
         return room_obj
     else:
         return None

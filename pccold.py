@@ -26,7 +26,6 @@ import requests
 
 import conf
 import tools
-import streamlink
 
 #log set
 logging.basicConfig(level=logging.INFO,
@@ -34,22 +33,11 @@ logging.basicConfig(level=logging.INFO,
                 datefmt='%m/%d %H:%M:%S',
                 filename='coldlog.log',
                 filemode='w')
-#console = logging.StreamHandler()
-#console.setLevel(logging.INFO)
-#formatter = logging.Formatter('%(name)-12s: %(message)s')
-#console.setFormatter(formatter)
-#logging.getLogger('').addHandler(console)
-
-def doStream(room_obj):
-    logging.info('doStream')
-    streams = streamlink.streams(conf.room_url+str(conf.room_id))
-    if conf.stream_type in streams.keys():
-        saveStream(conf.stream_type,room_obj)
-    else:
-        if len(streams.keys())>0:
-            saveStream(streams.keys()[0],room_obj)
-        else:
-            saveStream('source',room_obj)
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(name)-12s: %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger('').addHandler(console)
 
 
 def saveStream(level,room_obj):
@@ -59,15 +47,28 @@ def saveStream(level,room_obj):
     file_name=room_name+now_time+'.mp4'
     cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
     shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+    logging.info('save start pid='+str(shell.pid))
     logging.info('$ '+cmd)
-    sleepKiller(shell)
+    sleepkiller=threading.Thread(target=sleepKiller,args=(shell,))
+    sleepkiller.start()
+    returncode_observer=threading.Thread(target=returnCodeObserver,args=(shell,))
+    returncode_observer.start()
+
+def returnCodeObserver(shell):
+    logging.info('returnCodeObserver')
+    returncode=shell.wait()
+    logging.info('save quit pid='+str(shell.pid)+' return code='+str(returncode))
+    if returncode==0:
+        time.sleep(10)
+        main()
 
 def sleepKiller(shell):
+    logging.info('sleepKiller')
     time.sleep(conf.how_long)
     t=threading.Thread(target=main)
     t.start()
-    time.sleep(60)
-    os.killpg(os.getpgid(shell.pid),signal.SIGINT)
+    time.sleep(120)
+    os.killpg(os.getpgid(shell.pid),signal.SIGKILL)
     logging.info('save end '+str(shell.pid))
 
 def sendEmails(room_obj):
@@ -75,7 +76,7 @@ def sendEmails(room_obj):
     try:
         email_obj=tools.initPcColdEmail(room_obj)
         tools.sendEmail(email_obj['subj'],conf.my_email,email_obj['body'],conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
-    except Exception,e:
+    except Exception as e:
         logging.warning('*** fail send email')
         logging.warning(e)
         tb=traceback.format_exc()
@@ -100,7 +101,7 @@ def main():
                 is_live=True
                 t=threading.Thread(target=sendEmails,args=(room_obj,))
                 t.start()
-            doStream(room_obj)
+            saveStream(conf.stream_type,room_obj)
         else:
             if is_live:
                 is_live=False
@@ -110,7 +111,7 @@ def main():
             time.sleep(60)
             t=threading.Thread(target=main)
             t.start()
-    except Exception,e:
+    except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
         tb=traceback.format_exc()
