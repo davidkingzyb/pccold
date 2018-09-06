@@ -59,7 +59,7 @@ def returnCodeObserver(shell):
     returncode=shell.wait()
     logging.info('save quit pid='+str(shell.pid)+' return code='+str(returncode))
     if returncode==0:
-        time.sleep(10)
+        time.sleep(30)
         main()
 
 def sleepKiller(shell):
