@@ -42,3 +42,6 @@ def read(file):
 def write(file,str):
     with open(file,'w') as f:
         f.write(str)
+
+if __name__ == '__main__':
+    testRoomStatus()

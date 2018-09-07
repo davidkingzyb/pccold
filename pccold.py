@@ -45,7 +45,7 @@ def saveStream(level,room_obj):
     now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
     room_name=re.sub(r'[\\/:*?"< >()|]','',room_obj['data']['room_name'].replace(' ','_').replace(':','_'))
     file_name=room_name+now_time+'.mp4'
-    cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+conf.room_id+' '+level#+' &'
+    cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+conf.room_url+str(conf.room_num)+' '+level#+' &'
     shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
     logging.info('save start pid='+str(shell.pid))
     logging.info('$ '+cmd)
