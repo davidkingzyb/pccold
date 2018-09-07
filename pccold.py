@@ -58,7 +58,7 @@ def returnCodeObserver(shell):
     logging.info('returnCodeObserver')
     returncode=shell.wait()
     logging.info('save quit pid='+str(shell.pid)+' return code='+str(returncode))
-    if returncode==0:
+    if returncode==0 or returncode==1:
         time.sleep(30)
         main()
 
@@ -68,8 +68,11 @@ def sleepKiller(shell):
     t=threading.Thread(target=main)
     t.start()
     time.sleep(120)
-    os.killpg(os.getpgid(shell.pid),signal.SIGKILL)
-    logging.info('save end '+str(shell.pid))
+    try:
+        os.killpg(os.getpgid(shell.pid),signal.SIGKILL)
+        logging.info('save end '+str(shell.pid))
+    except Exception as e:
+        logging.info('*** save end err '+str(shell.pid))
 
 def sendEmails(room_obj):
     logging.info('sendEmails')
@@ -93,6 +96,8 @@ is_live=False
 
 def main(): 
     try:
+        sys.stdout.write('+')
+        sys.stdout.flush()
         room_obj=tools.testRoomStatus()
         global is_live
         if room_obj:
