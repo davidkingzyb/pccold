@@ -49,30 +49,59 @@ def saveStream(level,room_obj):
     shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
     logging.info('save start pid='+str(shell.pid))
     logging.info('$ '+cmd)
-    sleepkiller=threading.Thread(target=sleepKiller,args=(shell,))
-    sleepkiller.start()
-    returncode_observer=threading.Thread(target=returnCodeObserver,args=(shell,))
-    returncode_observer.start()
+    sleepkiller=SleepKillerThread(shell)
+    returncode_observer=ReturnCodeObserverThread(shell)
+    returncode_observer.sleepkiller=sleepkiller
 
-def returnCodeObserver(shell):
-    logging.info('returnCodeObserver')
-    returncode=shell.wait()
-    logging.info('save quit pid='+str(shell.pid)+' return code='+str(returncode))
-    if returncode==0 or returncode==1:
-        time.sleep(30)
-        main()
 
-def sleepKiller(shell):
-    logging.info('sleepKiller')
-    time.sleep(conf.how_long)
-    t=threading.Thread(target=main)
-    t.start()
-    time.sleep(120)
-    try:
-        os.killpg(os.getpgid(shell.pid),signal.SIGKILL)
-        logging.info('save end '+str(shell.pid))
-    except Exception as e:
-        logging.info('*** save end err '+str(shell.pid))
+class ReturnCodeObserverThread():
+    shell=None
+    thread=None
+    sleepkiller=None
+
+    def __init__(self,shell):
+        self.shell=shell
+        self.thread=threading.Thread(target=self.returnCodeObserver)
+        self.thread.start()
+
+    def returnCodeObserver(self):
+        logging.info('returnCodeObserver')
+        returncode=self.shell.wait()
+        logging.info('save quit pid='+str(self.shell.pid)+' return code='+str(returncode))
+        if returncode!=-9:
+            self.sleepkiller.stop()
+            time.sleep(30)
+            logging.info('start main from return code observer')
+            main()
+
+class SleepKillerThread():
+    isstoped=False
+    shell=None
+    thread=None
+
+    def __init__(self,shell):
+        self.shell=shell
+        self.thread=threading.Thread(target=self.sleepKiller)
+        self.thread.start()
+
+    def stop(self):
+        self.isstoped=True
+
+    def sleepKiller(self):
+        logging.info('sleepKiller')
+        time.sleep(conf.how_long)
+        if self.isstoped:
+            return
+        t=threading.Thread(target=main)
+        t.start()
+        time.sleep(60)
+        if self.isstoped:
+            return
+        try:
+            os.killpg(os.getpgid(self.shell.pid),signal.SIGKILL)
+            logging.info('save end '+str(self.shell.pid))
+        except Exception as e:
+            logging.info('*** save end err '+str(self.shell.pid))
 
 def sendEmails(room_obj):
     logging.info('sendEmails')
