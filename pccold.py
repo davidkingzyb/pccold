@@ -39,6 +39,11 @@ logging.basicConfig(level=logging.INFO,
 # console.setFormatter(formatter)
 # logging.getLogger('').addHandler(console)
 
+pidpool={}
+nowpid=None
+
+sleepkiller_thread_pool={}
+
 
 def saveStream(level,room_obj):
     logging.info('saveStream')
@@ -52,6 +57,9 @@ def saveStream(level,room_obj):
     sleepkiller=SleepKillerThread(shell)
     returncode_observer=ReturnCodeObserverThread(shell)
     returncode_observer.sleepkiller=sleepkiller
+    global pidpool
+    pidpool[str(shell.pid)]=True
+    nowpid=shell.pid
 
 
 class ReturnCodeObserverThread():
@@ -67,9 +75,11 @@ class ReturnCodeObserverThread():
     def returnCodeObserver(self):
         logging.info('returnCodeObserver')
         returncode=self.shell.wait()
+        global pidpool
+        del pidpool[str(self.shell.pid)]
+        self.sleepkiller.stop()
         logging.info('save quit pid='+str(self.shell.pid)+' return code='+str(returncode))
         if returncode!=-9:
-            self.sleepkiller.stop()
             time.sleep(30)
             logging.info('start main from return code observer')
             main()
@@ -95,8 +105,6 @@ class SleepKillerThread():
         t=threading.Thread(target=main)
         t.start()
         time.sleep(60)
-        if self.isstoped:
-            return
         try:
             os.killpg(os.getpgid(self.shell.pid),signal.SIGKILL)
             logging.info('save end '+str(self.shell.pid))
@@ -150,6 +158,13 @@ def main():
         logging.warning(e)
         tb=traceback.format_exc()
         logging.warning(tb)
+        global pidpool
+        for k,v in pidpool.items():
+            try:
+                os.killpg(os.getpgid(int(k)),signal.SIGKILL)
+                logging.info('main kill '+k)
+            except Exception as e:
+                logging.info('*** main kill err '+k)
         time.sleep(60)
         tt=threading.Thread(target=main)
         tt.start()
