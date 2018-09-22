@@ -7,12 +7,9 @@ import json
 
 import conf
 
-requests.adapters.DEFAULT_RETRIES = 3
 
 def testRoomStatus():
-    s=requests.session()
-    s.keep_alive=False
-    room_obj=s.get(conf.room_api+str(conf.room_num)).json()
+    room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
     if room_obj.get('data',{'room_status':'0'}).get('room_status','0')=="1":
         return room_obj
     else:

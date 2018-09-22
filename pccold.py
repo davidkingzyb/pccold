@@ -80,7 +80,7 @@ class ReturnCodeObserverThread():
         self.sleepkiller.stop()
         logging.info('save quit pid='+str(self.shell.pid)+' return code='+str(returncode))
         if returncode!=-9:
-            time.sleep(30)
+            time.sleep(60)
             logging.info('start main from return code observer')
             main()
 
@@ -150,7 +150,7 @@ def main():
                 doBypy()
             sys.stdout.write('-')
             sys.stdout.flush()
-            time.sleep(60)
+            time.sleep(90)
             t=threading.Thread(target=main)
             t.start()
     except Exception as e:
