@@ -18,11 +18,12 @@ def getRoomObjList():
     lines=md.split('\n')
     for l in lines:
         match=re.match(r'\[(.*)\]\((.*)\)',l)
-        room_obj={'file_name':match.group(1)+'.mp4','url':match.group(2)}
-        if room_obj.get('file_name','') in files:
-            logging.info(room_obj.get('file_name','')+' is exist')
-        else:
-            room_obj_list.append(room_obj)
+        if l and match:
+            room_obj={'file_name':match.group(1)+'.mp4','url':match.group(2)}
+            if room_obj.get('file_name','') in files:
+                logging.info(room_obj.get('file_name','')+' is exist')
+            else:
+                room_obj_list.append(room_obj)
     return room_obj_list
     
 
