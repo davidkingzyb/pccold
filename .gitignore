@@ -7,3 +7,4 @@ plugs
 conf.py
 node_modules
 __pycache__
+videolist.md
