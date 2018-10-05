@@ -8,10 +8,13 @@ files=os.listdir('./download')
 
 from tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
 
+isinit=False
+
 def getRoomObjList():
     global room_obj_list
     global files
-    if room_obj_list:
+    global isinit
+    if isinit:
         return room_obj_list
     logging.info('init room obj list')
     md=read('videolist.md')
@@ -24,6 +27,7 @@ def getRoomObjList():
                 logging.info(room_obj.get('file_name','')+' is exist')
             else:
                 room_obj_list.append(room_obj)
+    isinit=True
     return room_obj_list
     
 
