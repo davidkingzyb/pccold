@@ -32,6 +32,8 @@ is_live=False
 
 def main(): 
     try:
+        sys.stdout.write('+')
+        sys.stdout.flush()
         room_obj=testRoomStatus()
         global is_live
         if room_obj:
