@@ -59,7 +59,7 @@ def main():
         logging.warning(e)
         tb=traceback.format_exc()
         logging.warning(tb)
-        pp=copy(pidpool)
+        pp=pidpool.copy()
         for k,v in pp.items():
             try:
                 os.killpg(os.getpgid(int(k)),signal.SIGKILL)
