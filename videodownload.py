@@ -4,7 +4,7 @@ import logging
 import conf
 
 room_obj_list=[]
-files=os.listdir('./download')
+files=os.listdir(conf.download_path)
 
 from tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
 
@@ -17,7 +17,7 @@ def getRoomObjList():
     if isinit:
         return room_obj_list
     logging.info('init room obj list')
-    md=read('videolist.md')
+    md=read(conf.videolist_path)
     lines=md.split('\n')
     for l in lines:
         match=re.match(r'\[(.*)\]\((.*)\)',l)
@@ -37,7 +37,7 @@ def main():
     if len(room_obj_list)>0:
         room_obj=room_obj_list.pop()
         saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''))
-    else:
+    elif conf.is_bypy:
         doBypy()
 
 

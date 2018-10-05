@@ -8,7 +8,7 @@
 |    ___||  |____ |  |____ |   o   ||  |_ |  ___  |
 |___|    |_______||_______| \_____/ |____||_______|
 ===================================================
-2018/1/2 by DKZ https://davidkingzyb.github.io
+2018/10/5 by DKZ https://davidkingzyb.tech
 
 """
 
@@ -32,8 +32,6 @@ is_live=False
 
 def main(): 
     try:
-        sys.stdout.write('+')
-        sys.stdout.flush()
         room_obj=testRoomStatus()
         global is_live
         if room_obj:
@@ -48,9 +46,8 @@ def main():
         else:
             if is_live:
                 is_live=False
-                doBypy()
-            sys.stdout.write('-')
-            sys.stdout.flush()
+                if conf.is_bypy:
+                    doBypy()
             time.sleep(90)
             t=threading.Thread(target=main)
             t.start()

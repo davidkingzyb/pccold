@@ -11,5 +11,5 @@ mv danmu.log download/danmu_${DATE}.log
 rm nohup.out
 rm coldlog.log
 
-# nohup python3 pccold.py &
-# nohup python3 danmu.py >/dev/null 2>&1 &
+nohup python3 pccold.py &
+nohup python3 danmu.py >/dev/null 2>&1 &
