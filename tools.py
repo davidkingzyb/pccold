@@ -108,10 +108,14 @@ class SleepKillerThread():
 
 
 def testRoomStatus():
-    room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
-    if room_obj.get('data',{'room_status':'0'}).get('room_status','0')=="1":
-        return room_obj
-    else:
+    try:
+        room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
+        if room_obj.get('data',{'room_status':'0'}).get('room_status','0')=="1":
+            return room_obj
+        else:
+            return None
+    except Exception as e:
+        logging.info('*** test room status err')
         return None
 
 def initPcColdEmail(roomobj):

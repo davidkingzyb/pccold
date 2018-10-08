@@ -51,8 +51,7 @@ def main():
                 if conf.is_bypy:
                     doBypy()
             time.sleep(90)
-            t=threading.Thread(target=main)
-            t.start()
+            main()
     except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
@@ -66,8 +65,7 @@ def main():
             except Exception as e:
                 logging.info('*** main kill err '+k)
         time.sleep(60)
-        tt=threading.Thread(target=main)
-        tt.start()
+        main()
 
 ReturnCodeObserverThread.main=main
 SleepKillerThread.main=main
