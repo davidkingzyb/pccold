@@ -50,8 +50,6 @@ def main():
                 is_live=False
                 if conf.is_bypy:
                     doBypy()
-            time.sleep(90)
-            main()
     except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
