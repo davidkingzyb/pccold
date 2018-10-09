@@ -50,6 +50,12 @@ def main():
                 is_live=False
                 if conf.is_bypy:
                     doBypy()
+                cmd='nohup python3 pccold.py &'
+                shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
+                logging.info('exit 0')
+                exit(0)
+            time.sleep(90)  
+            main()
     except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
