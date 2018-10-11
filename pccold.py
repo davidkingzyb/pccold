@@ -36,16 +36,16 @@ def main():
         sys.stdout.flush()
         room_obj=testRoomStatus()
         global is_live
-        if room_obj:
+        if room_obj.get('room_status')=="1":
             logging.info('live on')
             if not is_live:
                 is_live=True
                 t=threading.Thread(target=sendEmails,args=(room_obj,))
                 t.start()
             now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
-            room_name=room_obj.get('data',{'room_name':'default'}).get('room_name','default').replace(' ','_').replace(':','_')
+            room_name=room_obj.get('room_name','default').replace(' ','_').replace(':','_')
             saveStream(conf.stream_type,room_name+now_time+'.mp4')
-        else:
+        elif room_obj.get('room_status')=="2":
             if is_live:
                 is_live=False
                 if conf.is_bypy:
@@ -55,7 +55,13 @@ def main():
                 logging.info('exit 0')
                 exit(0)
             time.sleep(90)  
-            main()
+            tt=threading.Thread(target=main)
+            tt.start()
+        else:
+            time.sleep(90)
+            tt=threading.Thread(target=main)
+            tt.start()
+
     except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
@@ -69,7 +75,8 @@ def main():
             except Exception as e:
                 logging.info('*** main kill err '+k)
         time.sleep(60)
-        main()
+        ttt=threading.Thread(target=main)
+        ttt.start()
 
 ReturnCodeObserverThread.main=main
 SleepKillerThread.main=main

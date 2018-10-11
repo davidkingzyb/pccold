@@ -110,21 +110,19 @@ class SleepKillerThread():
 def testRoomStatus():
     try:
         room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
-        if room_obj.get('data',{'room_status':'0'}).get('room_status','0')=="1":
-            return room_obj
-        else:
-            return None
+        result=room_obj.get('data',{'room_status':'0'})
+        return result
     except Exception as e:
         logging.info('*** test room status err')
-        return None
+        return {'room_status':'0'}
 
 def initPcColdEmail(roomobj):
-    subj='[pccold]'+roomobj['data']['room_name']+'@'+roomobj['data']['owner_name']
-    body='\nroom_name:'+roomobj['data']['room_name']
-    body+='\nowner_name:'+roomobj['data']['owner_name']+'#'+roomobj['data']['room_id']
-    body+='\nstart_time:'+roomobj['data']['start_time']
-    body+='\ncate_name:'+roomobj['data']['cate_name']
-    body+='\nlink:http://www.douyutv.com/'+roomobj['data']['room_id']
+    subj='[pccold]'+roomobj['room_name']+'@'+roomobj['owner_name']
+    body='\nroom_name:'+roomobj['room_name']
+    body+='\nowner_name:'+roomobj['owner_name']+'#'+roomobj['room_id']
+    body+='\nstart_time:'+roomobj['start_time']
+    body+='\ncate_name:'+roomobj['cate_name']
+    body+='\nlink:http://www.douyutv.com/'+roomobj['room_id']
     body+=conf.pccold_contact
     return {'body':body,'subj':subj}
 
