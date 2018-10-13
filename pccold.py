@@ -32,8 +32,6 @@ is_live=False
 
 def main(): 
     try:
-        sys.stdout.write('+')
-        sys.stdout.flush()
         room_obj=testRoomStatus()
         global is_live
         if room_obj.get('room_status')=="1":
@@ -50,10 +48,6 @@ def main():
                 is_live=False
                 if conf.is_bypy:
                     doBypy()
-                cmd='nohup python3 pccold.py &'
-                shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
-                logging.info('exit 0')
-                exit(0)
             time.sleep(90)  
             tt=threading.Thread(target=main)
             tt.start()
@@ -61,7 +55,6 @@ def main():
             time.sleep(90)
             tt=threading.Thread(target=main)
             tt.start()
-
     except Exception as e:
         logging.warning('*** main fail')
         logging.warning(e)
