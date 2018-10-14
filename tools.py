@@ -53,11 +53,13 @@ def saveStream(level,file_name,url=conf.room_url+str(conf.room_num)):
     sleepkiller=SleepKillerThread(shell)
     returncode_observer=ReturnCodeObserverThread(shell)
     returncode_observer.sleepkiller=sleepkiller
+    sleepkiller.return_code_observer=returncode_observer
     global pidpool
     pidpool[str(shell.pid)]=True
 
 
 class ReturnCodeObserverThread():
+    isstoped=False
     shell=None
     thread=None
     sleepkiller=None
@@ -67,6 +69,9 @@ class ReturnCodeObserverThread():
         self.thread=threading.Thread(target=self.returnCodeObserver)
         self.thread.start()
 
+    def stop(self):
+        self.isstoped=True
+
     def returnCodeObserver(self):
         logging.info('returnCodeObserver')
         returncode=self.shell.wait()
@@ -74,7 +79,7 @@ class ReturnCodeObserverThread():
         del pidpool[str(self.shell.pid)]
         self.sleepkiller.stop()
         logging.info('save quit pid='+str(self.shell.pid)+' return code='+str(returncode))
-        if returncode!=-9:
+        if returncode!=-9 and not self.isstoped:
             time.sleep(60)
             logging.info('start main from return code observer')
             ReturnCodeObserverThread.main()
@@ -83,6 +88,7 @@ class SleepKillerThread():
     isstoped=False
     shell=None
     thread=None
+    return_code_observer=None
 
     def __init__(self,shell):
         self.shell=shell
@@ -99,6 +105,7 @@ class SleepKillerThread():
         time.sleep(conf.how_long)
         t=threading.Thread(target=SleepKillerThread.main)
         t.start()
+        self.return_code_observer.stop()
         time.sleep(60)
         try:
             os.killpg(os.getpgid(self.shell.pid),signal.SIGKILL)
