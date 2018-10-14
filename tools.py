@@ -99,10 +99,12 @@ class SleepKillerThread():
         self.isstoped=True
 
     def sleepKiller(self):
-        if self.isstoped or not conf.is_cut:
+        if not conf.is_cut:
             return
         logging.info('sleepKiller')
         time.sleep(conf.how_long)
+        if self.isstoped:
+            return
         t=threading.Thread(target=SleepKillerThread.main)
         t.start()
         self.return_code_observer.stop()
