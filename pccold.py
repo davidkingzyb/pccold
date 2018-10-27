@@ -41,7 +41,8 @@ def main():
                 t=threading.Thread(target=sendEmails,args=(room_obj,))
                 t.start()
             now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
-            room_name=room_obj.get('room_name','default').replace(' ','_').replace(':','_')
+            room_name=room_obj.get('room_name','default')
+            room_name=re.sub(r"[\/\\\:\*\?\"\<\>\| \$\^\+\-\!]",'_',room_name)
             saveStream(conf.stream_type,room_name+now_time+'.mp4')
         elif room_obj.get('room_status')=="2":
             if is_live:
