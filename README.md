@@ -12,6 +12,7 @@
 - python3
 - [streamlink](https://github.com/streamlink/streamlink)
 - [bypy](https://github.com/houtianze/bypy)
+- [psutil](https://github.com/giampaolo/psutil)
 
 ## Config
 
@@ -65,6 +66,10 @@ douyutv_plug_path='/Library/Python/2.7/site-packages/streamlink/plugins/douyutv.
 格式`[文件名](URL路径)`
 
 `$ nohup python3 videodownload.py &`
+
+### 清除已上传的视频
+
+`$ nohup python3 bypyrm.py &`
 
 
 

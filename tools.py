@@ -9,6 +9,7 @@ import threading
 import os
 import signal
 import logging
+import traceback
 
 import conf
 
@@ -39,10 +40,10 @@ def sendEmails(room_obj):
 
 def doBypy():
     logging.info('doBypy')
-    date_time=time.strftime('_%Y_%m_%d_%H_%M',time.localtime(time.time()))
-    cmd='cd '+conf.download_path+';cp ../coldlog.log coldlog'+date_time+'.log;bypy upload'
+    cmd='cd '+conf.download_path+';bypy upload'
     logging.info('$ '+cmd)
     shell=subprocess.Popen(cmd,shell=True)
+    return shell
 
 def saveStream(level,file_name,url=conf.room_url+str(conf.room_num)):
     logging.info('saveStream')
