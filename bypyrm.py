@@ -1,6 +1,6 @@
 # 2018/12/31 by DKZ
 
-from tools import sendEmails,doBypy
+from tools import sendEmail,doBypy
 import conf
 import psutil
 import subprocess
@@ -16,8 +16,7 @@ def initBypyRmEmail(body):
     try:
         sendEmail(subj,conf.my_email,body,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
     except Exception as e:
-        pass
-
+        print('*** email fail',e)
 
 def main():
     print('start bypyrm')
