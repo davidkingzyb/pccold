@@ -27,6 +27,7 @@ import requests
 import conf
 
 from tools import sendEmails,doBypy,saveStream,testRoomStatus,pidpool,ReturnCodeObserverThread,SleepKillerThread
+from bypyrm import psCheck,initBypyRmEmail,bypyrm
 
 is_live=False
 
@@ -45,13 +46,17 @@ def main():
             room_name=re.sub(r"[\/\\\:\*\?\"\<\>\| \$\^\+\-\!]",'_',room_name)
             saveStream(conf.stream_type,room_name+now_time+'.mp4')
         elif room_obj.get('room_status')=="2":
-            if is_live:
-                is_live=False
-                if conf.is_bypy:
-                    doBypy()
             time.sleep(90)  
             tt=threading.Thread(target=main)
             tt.start()
+            if is_live:
+                is_live=False
+                if conf.is_bypy:
+                    shell=doBypy()
+                    returncode=shell.wait()
+                    logging.info('bypy returncode '+str(returncode))
+                    if returncode==0 and conf.is_bypy_rm:
+                        bypyrm()
         else:
             time.sleep(90)
             tt=threading.Thread(target=main)

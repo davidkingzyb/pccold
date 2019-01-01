@@ -25,6 +25,7 @@ stream_type='medium' #录像质量 source|medium|low
 is_cut=True #是否分段
 how_long=60*30 #录像分段长度(秒)
 is_bypy=True #是否使用bypy上传百度云
+is_bypy_rm=False #上传百度云后删除
 download_path="./download" #录像保存路径
 videolist_path='videolist.md' #批量下载斗鱼视频列表
 

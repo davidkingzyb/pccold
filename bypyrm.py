@@ -4,6 +4,7 @@ from tools import sendEmail,doBypy
 import conf
 import psutil
 import subprocess
+import logging
 
 
 def psCheck(name):
@@ -12,14 +13,14 @@ def psCheck(name):
 
 def initBypyRmEmail(body):
     subj='[pccold] bypyrm'
-    print('[bypyrm] '+body)
+    logging.info('[bypyrm] '+body)
     try:
         sendEmail(subj,conf.my_email,body,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
     except Exception as e:
-        print('*** email fail',e)
+        logging.info('*** email fail',e)
 
-def main():
-    print('start bypyrm')
+def bypyrm():
+    logging.info('start bypyrm')
     if not psCheck('bypy') and not psCheck('streamlink'):
         shell=doBypy()
         returncode=shell.wait()
@@ -28,10 +29,10 @@ def main():
             p=subprocess.Popen(cmd,shell=True)
             initBypyRmEmail('ok')
         else:
-            initBypyRmEmail('fail '+returncode)
+            initBypyRmEmail('fail '+str(returncode))
     else:
         initBypyRmEmail('psCheck process is runing')
 
 
 if __name__ == '__main__':
-    main()
+    bypyrm()     

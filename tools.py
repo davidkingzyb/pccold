@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%m/%d %H:%M:%S',
                 filename='coldlog.log',
-                filemode='w')
+                filemode='a')
 # console = logging.StreamHandler()
 # console.setLevel(logging.INFO)
 # formatter = logging.Formatter('%(name)-12s: %(message)s')
