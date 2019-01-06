@@ -6,7 +6,8 @@ import conf
 room_obj_list=[]
 files=os.listdir(conf.download_path)
 
-from tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from tools import read,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from bypyrm import doBypy
 
 isinit=False
 
