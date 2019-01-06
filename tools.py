@@ -38,13 +38,6 @@ def sendEmails(room_obj):
         tb=traceback.format_exc()
         logging.warning(tb)
 
-def doBypy():
-    logging.info('doBypy')
-    cmd='cd '+conf.download_path+';bypy upload'
-    logging.info('$ '+cmd)
-    shell=subprocess.Popen(cmd,shell=True)
-    return shell
-
 def saveStream(level,file_name,url=conf.room_url+str(conf.room_num)):
     logging.info('saveStream')
     cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+url+' '+level#+' &'
@@ -120,19 +113,21 @@ class SleepKillerThread():
 def testRoomStatus():
     try:
         room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
-        result=room_obj.get('data',{'room_status':'0'})
+        result=room_obj.get('room',{'show_status':0})
         return result
     except Exception as e:
         logging.info('*** test room status err')
-        return {'room_status':'0'}
+        return {'show_status':0}
 
 def initPcColdEmail(roomobj):
-    subj='[pccold]'+roomobj['room_name']+'@'+roomobj['owner_name']
-    body='\nroom_name:'+roomobj['room_name']
-    body+='\nowner_name:'+roomobj['owner_name']+'#'+roomobj['room_id']
-    body+='\nstart_time:'+roomobj['start_time']
-    body+='\ncate_name:'+roomobj['cate_name']
-    body+='\nlink:http://www.douyutv.com/'+roomobj['room_id']
+    subj='[pccold]'+roomobj.get('room_name')+'@'+roomobj.get('nickname')
+    body='\nroom_name:'+roomobj.get('room_name')
+    body+='\nowner_name:'+roomobj.get('owner_name')+'#'+str(roomobj.get('room_id'))
+    t=time.localtime(roomobj.get('show_time'))
+    start_time=time.strftime("%Y-%m-%d %H:%M:%S", t)
+    body+='\nstart_time:'+start_time
+    body+='\nsecond_lvl_name:'+roomobj.get("second_lvl_name")
+    body+='\nlink:http://www.douyutv.com/'+str(roomobj.get('room_id'))
     body+=conf.pccold_contact
     return {'body':body,'subj':subj}
 

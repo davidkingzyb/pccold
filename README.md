@@ -30,7 +30,7 @@ download_path="./download" #录像保存路径
 videolist_path='videolist.md' #批量下载斗鱼视频列表
 
 #api
-room_api='http://open.douyucdn.cn/api/RoomApi/room/' 
+room_api='https://www.douyu.com/betard/' 
 room_url="http://www.douyutv.com/"
 
 #邮件配置

@@ -1,11 +1,17 @@
 # 2018/12/31 by DKZ
 
-from tools import sendEmail,doBypy
+from tools import sendEmail
 import conf
 import psutil
 import subprocess
 import logging
 
+def doBypy():
+    logging.info('doBypy')
+    cmd='cd '+conf.download_path+';bypy upload'
+    logging.info('$ '+cmd)
+    shell=subprocess.Popen(cmd,shell=True)
+    return shell
 
 def psCheck(name):
     result=[p.info for p in psutil.process_iter(attrs=['pid', 'name']) if name in p.info['name']]

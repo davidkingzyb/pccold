@@ -26,8 +26,8 @@ import requests
 
 import conf
 
-from tools import sendEmails,doBypy,saveStream,testRoomStatus,pidpool,ReturnCodeObserverThread,SleepKillerThread
-from bypyrm import psCheck,initBypyRmEmail,bypyrm
+from tools import sendEmails,saveStream,testRoomStatus,pidpool,ReturnCodeObserverThread,SleepKillerThread
+from bypyrm import psCheck,initBypyRmEmail,bypyrm,doBypy
 
 is_live=False
 
@@ -35,7 +35,7 @@ def main():
     try:
         room_obj=testRoomStatus()
         global is_live
-        if room_obj.get('room_status')=="1":
+        if room_obj.get('show_status')==1:
             logging.info('live on')
             if not is_live:
                 is_live=True
@@ -45,7 +45,7 @@ def main():
             room_name=room_obj.get('room_name','default')
             room_name=re.sub(r"[\/\\\:\*\?\"\<\>\| \$\^\+\-\!]",'_',room_name)
             saveStream(conf.stream_type,room_name+now_time+'.mp4')
-        elif room_obj.get('room_status')=="2":
+        elif room_obj.get('show_status')==2:
             time.sleep(90)  
             tt=threading.Thread(target=main)
             tt.start()
