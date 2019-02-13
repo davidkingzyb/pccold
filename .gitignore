@@ -8,3 +8,5 @@ conf.py
 node_modules
 __pycache__
 videolist.md
+dist
+pccold.egg-info/

@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(name='pccold',
     version='0.1',
-    packages=['lib'],
+    packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
     license='MIT',
