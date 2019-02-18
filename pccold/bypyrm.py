@@ -1,12 +1,14 @@
 # 2018/12/31 by DKZ
 
-from tools import sendEmail
-import conf
+from .tools import sendEmail
 import psutil
 import subprocess
 import logging
+from .config import conf
+
 
 def doBypy():
+    global conf
     logging.info('doBypy')
     cmd='cd '+conf.download_path+';bypy upload'
     logging.info('$ '+cmd)
@@ -18,6 +20,7 @@ def psCheck(name):
     return result
 
 def initBypyRmEmail(body):
+    global conf
     subj='[pccold] bypyrm'
     logging.info('[bypyrm] '+body)
     try:
@@ -26,6 +29,7 @@ def initBypyRmEmail(body):
         logging.info('*** email fail',e)
 
 def bypyrm():
+    global conf
     logging.info('start bypyrm')
     if not psCheck('bypy') and not psCheck('streamlink'):
         shell=doBypy()

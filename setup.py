@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.11',
+    version='0.12',
     packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
@@ -20,6 +20,5 @@ setup(name='pccold',
     )
 
 # $ python3 setup.py sdist
-
 # $ python3 setup.py sdist bdist_wheel
 # $ twine upload dist/pccold-0.1-py3-none-any.whl 

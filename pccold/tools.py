@@ -10,24 +10,25 @@ import os
 import signal
 import logging
 import traceback
-
-import conf
+from .config import conf
 
 #log set
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%m/%d %H:%M:%S',
-                filename='coldlog.log',
+                filename='/tmp/pccold.log',
                 filemode='a')
-# console = logging.StreamHandler()
-# console.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(name)-12s: %(message)s')
-# console.setFormatter(formatter)
-# logging.getLogger('').addHandler(console)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(name)-12s: %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 pidpool={}
 
 def sendEmails(room_obj):
+    global conf
+    print(conf)
     logging.info('sendEmails')
     try:
         email_obj=initPcColdEmail(room_obj)
@@ -38,7 +39,9 @@ def sendEmails(room_obj):
         tb=traceback.format_exc()
         logging.warning(tb)
 
-def saveStream(level,file_name,url=conf.room_url+str(conf.room_num)):
+def saveStream(level,file_name,url):
+    global conf
+    url=url or conf.room_url+str(conf.room_num)
     logging.info('saveStream')
     cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+url+' '+level#+' &'
     shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
@@ -93,6 +96,7 @@ class SleepKillerThread():
         self.isstoped=True
 
     def sleepKiller(self):
+        global conf
         if not conf.is_cut:
             return
         logging.info('sleepKiller')
@@ -111,6 +115,8 @@ class SleepKillerThread():
 
 
 def testRoomStatus():
+    global conf
+    print(conf)
     try:
         room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
         result=room_obj.get('room',{'show_status':0})
@@ -120,6 +126,7 @@ def testRoomStatus():
         return {'show_status':0}
 
 def initPcColdEmail(roomobj):
+    global conf
     subj='[pccold]'+roomobj.get('room_name')+'@'+roomobj.get('nickname')
     body='\nroom_name:'+roomobj.get('room_name')
     body+='\nowner_name:'+roomobj.get('owner_name')+'#'+str(roomobj.get('room_id'))

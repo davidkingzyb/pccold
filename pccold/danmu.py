@@ -3,7 +3,6 @@
 
 
 import socket,re,threading,time,logging
-import conf
 
 logging.basicConfig(level=logging.INFO,
                 format='%(message)s',
@@ -15,6 +14,7 @@ PORT=8601
 
 class Danmu(object):
     def __init__(self):
+        global conf
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.codeLocalToServer = 689
         self.serverToLocal = 690

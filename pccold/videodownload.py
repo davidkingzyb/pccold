@@ -1,19 +1,19 @@
 import re
 import os
 import logging
-import conf
+from .config import conf
 
 room_obj_list=[]
-files=os.listdir(conf.download_path)
 
-from tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from .tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
 
 isinit=False
 
 def getRoomObjList():
     global room_obj_list
-    global files
     global isinit
+    global conf
+    files=os.listdir(conf.download_path)
     if isinit:
         return room_obj_list
     logging.info('init room obj list')
@@ -32,15 +32,14 @@ def getRoomObjList():
     
 
 def main():
+    global conf
     print('videodownload main')
     room_obj_list=getRoomObjList()
     if len(room_obj_list)>0:
         room_obj=room_obj_list.pop()
-        saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''))
+        saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''),None)
     elif conf.is_bypy:
         doBypy()
-
-
 
 ReturnCodeObserverThread.main=main
 SleepKillerThread.main=main
