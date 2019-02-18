@@ -10,3 +10,5 @@ __pycache__
 videolist.md
 dist
 pccold.egg-info/
+.pypirc
+build

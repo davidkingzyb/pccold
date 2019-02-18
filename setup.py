@@ -3,20 +3,20 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.1',
+    version='0.11',
     packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
     license='MIT',
     url='https://pypi.python.org/pypi',
-    data_files = [('etc', ['etc/pccold.conf'])],
+    data_files = [('/etc', ['etc/pccold.conf'])],
     keywords="douyu pccold",
     install_requires=[
         'streamlink>=1.0.0',
         'bypy>=1.6.4',
         'psutil>=5.5.0'
     ],
-    scripts=['bin/pccold']
+    scripts=['./bin/pccold']
     )
 
 # $ python3 setup.py sdist
