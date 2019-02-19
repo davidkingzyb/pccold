@@ -18,11 +18,11 @@ logging.basicConfig(level=logging.INFO,
                 datefmt='%m/%d %H:%M:%S',
                 filename='/tmp/pccold.log',
                 filemode='a')
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(name)-12s: %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger('').addHandler(console)
 
 pidpool={}
 

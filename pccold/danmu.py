@@ -2,12 +2,8 @@
 # 2018/2/6 by DKZ
 
 
-import socket,re,threading,time,logging
-
-logging.basicConfig(level=logging.INFO,
-                format='%(message)s',
-                filename='danmu.log',
-                filemode='w')
+import socket,re,threading,time
+from .config import conf
 
 HOST='openbarrage.douyutv.com'
 PORT=8601
@@ -33,13 +29,13 @@ class Danmu(object):
         self.sock.connect((HOST, PORT))
         self.sendMsg(msg)
         data = self.sock.recv(1024)
-        logging.info('### login\t\t'+ repr(data))
+        print('### login\t\t'+ repr(data))
 
     def join(self):
         msg='type@=joingroup/rid@='+str(self.rid)+'/gid@='+str(self.gid)+'/\x00'  
         self.sendMsg(msg)
         data = self.sock.recv(1024)
-        logging.info('### join\t\t'+ repr(data))
+        print('### join\t\t'+ repr(data))
 
     def keeplive(self):
         while True:
@@ -47,13 +43,13 @@ class Danmu(object):
             self.sendMsg(msg)
             data = self.sock.recv(1024)
             now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
-            logging.info('### keeplive'+now_time)
+            print('### keeplive'+now_time)
             time.sleep(40)
 
     def recv(self):
         while True:
             data = self.sock.recv(1024)
-            # logging.info(repr(data))
+            # print(repr(data))
             self.dataProcess(data)
 
     def dataProcess(self,data):
@@ -62,21 +58,21 @@ class Danmu(object):
             if d.group(1)==b'chatmsg':
                 danmu = re.search(b'nn@=(.*)/txt@=(.*?)/',data)
                 try:
-                    logging.info(danmu.group(1).decode()+':::'+danmu.group(2).decode())
+                    print(danmu.group(1).decode()+':::'+danmu.group(2).decode())
                 except BaseException as e:
-                    logging.info("### *** chatmsg Error",danmu)
+                    print("### *** chatmsg Error",danmu)
             elif d.group(1)==b'uenter':
                 user = re.search(b'uid@=(.*)/nn@=(.*?)/',data)
                 try:
-                    logging.info(user.group(2).decode()+'@@@'+user.group(1).decode())
+                    print(user.group(2).decode()+'@@@'+user.group(1).decode())
                 except BaseException as e:
-                    logging.info("### *** uenter Error",user)
+                    print("### *** uenter Error",user)
             elif d.group(1)==b'al':
-                logging.info('### cold leave')
+                print('### cold leave')
             elif d.group(1)==b'ab':
-                logging.info('### cold back')
+                print('### cold back')
             elif d.group(1)==b'upbc':
-                logging.info('### cold level up')
+                print('### cold level up')
 
 
 if __name__ == '__main__':
