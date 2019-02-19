@@ -1,20 +1,20 @@
 import re
 import os
 import logging
-import conf
+from .config import conf
 
 room_obj_list=[]
-files=os.listdir(conf.download_path)
 
-from tools import read,saveStream,ReturnCodeObserverThread,SleepKillerThread
-from bypyrm import doBypy
+from .tools import read,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from .bypyrm import doBypy
 
 isinit=False
 
 def getRoomObjList():
     global room_obj_list
-    global files
     global isinit
+    global conf
+    files=os.listdir(conf.download_path)
     if isinit:
         return room_obj_list
     logging.info('init room obj list')
@@ -32,7 +32,8 @@ def getRoomObjList():
     return room_obj_list
     
 
-def main():
+def downloadVideo():
+    global conf
     print('videodownload main')
     room_obj_list=getRoomObjList()
     if len(room_obj_list)>0:
@@ -41,11 +42,9 @@ def main():
     elif conf.is_bypy:
         doBypy()
 
-
-
-ReturnCodeObserverThread.main=main
-SleepKillerThread.main=main
+ReturnCodeObserverThread.main=downloadVideo
+SleepKillerThread.main=downloadVideo
 
 
 if __name__ == '__main__':
-    main()
+    downloadVideo()
