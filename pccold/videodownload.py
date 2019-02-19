@@ -5,7 +5,8 @@ from .config import conf
 
 room_obj_list=[]
 
-from .tools import read,doBypy,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from .tools import read,saveStream,ReturnCodeObserverThread,SleepKillerThread
+from .bypyrm import doBypy
 
 isinit=False
 
@@ -31,19 +32,19 @@ def getRoomObjList():
     return room_obj_list
     
 
-def main():
+def downloadVideo():
     global conf
     print('videodownload main')
     room_obj_list=getRoomObjList()
     if len(room_obj_list)>0:
         room_obj=room_obj_list.pop()
-        saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''),None)
+        saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''))
     elif conf.is_bypy:
         doBypy()
 
-ReturnCodeObserverThread.main=main
-SleepKillerThread.main=main
+ReturnCodeObserverThread.main=downloadVideo
+SleepKillerThread.main=downloadVideo
 
 
 if __name__ == '__main__':
-    main()
+    downloadVideo()

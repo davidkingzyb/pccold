@@ -12,11 +12,11 @@ setup(name='pccold',
     data_files = [('/etc', ['etc/pccold.conf'])],
     keywords="douyu pccold",
     install_requires=[
-        'streamlink>=1.0.0',
+        'streamlink==0.14.2',
         'bypy>=1.6.4',
         'psutil>=5.5.0'
     ],
-    scripts=['./bin/pccold']
+    scripts=['./bin/pccold','./bin/pccoldvideo']
     )
 
 # $ python3 setup.py sdist
