@@ -16,7 +16,7 @@ from .config import conf
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%m/%d %H:%M:%S',
-                filename='/tmp/pccold.log',
+                filename=conf.log_path,
                 filemode='a')
 # console = logging.StreamHandler()
 # console.setLevel(logging.INFO)
@@ -28,7 +28,6 @@ pidpool={}
 
 def sendEmails(room_obj):
     global conf
-    print(conf)
     logging.info('sendEmails')
     try:
         email_obj=initPcColdEmail(room_obj)
@@ -116,7 +115,6 @@ class SleepKillerThread():
 
 def testRoomStatus():
     global conf
-    print(conf)
     try:
         room_obj=requests.get(conf.room_api+str(conf.room_num),timeout=10).json()
         result=room_obj.get('room',{'show_status':0})

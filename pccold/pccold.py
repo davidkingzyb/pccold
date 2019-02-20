@@ -35,7 +35,7 @@ def main():
     try:
         global is_live
         room_obj=testRoomStatus()
-        print(room_obj.get('show_status'))
+        logging.info(room_obj.get('show_status'))
         if room_obj.get('show_status')==1:
             logging.info('live on')
             if not is_live:
