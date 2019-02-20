@@ -46,6 +46,7 @@ is_bypy=true #是否使用bypy上传百度云
 is_bypy_rm=false #上传百度云后删除
 download_path="/home/dkz/download" #录像保存路径
 videolist_path="/home/dkz/videolist.md" #批量下载斗鱼视频列表
+log_path="/home/dkz/pccold.log"
 
 #api
 room_api="https://www.douyu.com/betard/" 
