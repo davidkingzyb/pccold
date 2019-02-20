@@ -9,7 +9,7 @@
 
 use pip3
 
-`$ sudo pip3 install pcold`
+`$ sudo pip3 install pccold`
 
 or download source code
 
