@@ -21,6 +21,9 @@ or download source code
 
 `$ pccold`
 
+后台运行
+`$ nohup pccold &`
+
 ### 弹幕抓取
 
 `$ pccolddanmu`
@@ -32,9 +35,9 @@ or download source code
 
 `$ pccoldvideo`
 
-## Config
+## Setting
 
-`$ cd /etc/pccold.conf`
+`$ sudo vi /etc/pccold.conf`
 
 ```
 room_id="cold" #斗鱼房间ID
