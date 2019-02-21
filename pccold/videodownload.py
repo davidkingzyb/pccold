@@ -42,9 +42,5 @@ def downloadVideo():
     elif conf.is_bypy:
         doBypy()
 
-ReturnCodeObserverThread.main=downloadVideo
-SleepKillerThread.main=downloadVideo
-
-
 if __name__ == '__main__':
     downloadVideo()

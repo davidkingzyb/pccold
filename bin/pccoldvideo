@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import pccold
+from pccold import downloadVideo,ReturnCodeObserverThread,SleepKillerThread
 
 print('PcCold with DKZ download video')
-pccold.downloadVideo()
+ReturnCodeObserverThread.main=downloadVideo
+SleepKillerThread.main=downloadVideo
+downloadVideo()
