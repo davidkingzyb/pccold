@@ -30,10 +30,12 @@ or download source code
 
 ### 下载斗鱼视频
 
+`$ pccoldvideo`
+
 编辑下载列表
 格式`[文件名](URL路径)`
 
-`$ pccoldvideo`
+`$ pccoldvideolist`
 
 ## Setting
 
@@ -42,6 +44,7 @@ or download source code
 ```
 room_id="cold" #斗鱼房间ID
 room_num=20360 #斗鱼房间数字ID
+video_author="vJGdy0qrKwXy"
 stream_type="medium" #录像质量 source|medium|low
 is_cut=true #是否分段
 how_long=1800 #录像分段长度(秒)

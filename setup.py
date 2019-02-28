@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.15',
+    version='0.16',
     packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
@@ -16,7 +16,10 @@ setup(name='pccold',
         'bypy>=1.6.4',
         'psutil>=5.5.0'
     ],
-    scripts=['./bin/pccold','./bin/pccoldvideo','./bin/pccolddanmu']
+    scripts=['./bin/pccold',
+    './bin/pccoldvideo',
+    './bin/pccoldvideolist',
+    './bin/pccolddanmu']
     )
 
 # $ python3 setup.py sdist

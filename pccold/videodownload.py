@@ -2,6 +2,7 @@ import re
 import os
 import logging
 from .config import conf
+import requests
 
 room_obj_list=[]
 
@@ -36,6 +37,29 @@ def downloadVideo():
     global conf
     print('videodownload main')
     room_obj_list=getRoomObjList()
+    if len(room_obj_list)>0:
+        room_obj=room_obj_list.pop()
+        saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''))
+    elif conf.is_bypy:
+        doBypy()
+
+def reqVideoList(author):
+    result=[]
+    api='https://v.douyu.com/show/'
+    url="https://v.douyu.com/video/author/getAuthorShowAndVideoList?up_id={author}".format(author=author)
+    data=requests.get(url).json()
+    ls=data.get('data').get('list')
+    for l in ls:
+        vls=l.get('video_list')
+        for ll in vls:
+            title=ll.get('title')
+            file_name=re.sub(r"[\/\\\:\*\?\"\<\>\| \$\^\+\-\!]",'_',title)
+            result.append({'url':api+ll.get('hash_id'),'file_name':file_name+'.mp4'})
+    return result
+
+def download3DaysVideo():
+    global conf
+    room_obj_list=reqVideoList(conf.video_author)
     if len(room_obj_list)>0:
         room_obj=room_obj_list.pop()
         saveStream('source',room_obj.get('file_name','default.mp4'),url=room_obj.get('url',''))
