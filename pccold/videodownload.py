@@ -44,6 +44,10 @@ def downloadVideo():
         doBypy()
 
 def reqVideoList(author):
+    global room_obj_list
+    global isinit
+    if isinit:
+        return room_obj_list
     result=[]
     api='https://v.douyu.com/show/'
     url="https://v.douyu.com/video/author/getAuthorShowAndVideoList?up_id={author}".format(author=author)
@@ -53,8 +57,11 @@ def reqVideoList(author):
         vls=l.get('video_list')
         for ll in vls:
             title=ll.get('title')
+            print(title)
             file_name=re.sub(r"[\/\\\:\*\?\"\<\>\| \$\^\+\-\!]",'_',title)
             result.append({'url':api+ll.get('hash_id'),'file_name':file_name+'.mp4'})
+    room_obj_list=result
+    isinit=True
     return result
 
 def download3DaysVideo():
