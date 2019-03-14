@@ -5,6 +5,8 @@
 2019/2/19 by DKZ
 
 
+**streamlink无法下载直播的问题，请结合[pccold_puppeteer](https://github.com/davidkingzyb/pccold_puppeteer)使用**
+
 ## Install
 
 use pip3
