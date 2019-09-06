@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.17',
+    version='0.18',
     packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
@@ -14,7 +14,9 @@ setup(name='pccold',
     install_requires=[
         'streamlink==0.14.2',
         'bypy>=1.6.4',
-        'psutil>=5.5.0'
+        'psutil>=5.5.0',
+        'pystt==0.2.2',
+        'websocket-client>=0.54.0'
     ],
     scripts=['./bin/pccold',
     './bin/pccoldvideo',

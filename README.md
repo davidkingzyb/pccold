@@ -56,10 +56,6 @@ download_path="/home/dkz/download" #录像保存路径
 videolist_path="/home/dkz/videolist.md" #批量下载斗鱼视频列表
 log_path="/home/dkz/pccold.log"
 
-#api
-room_api="https://www.douyu.com/betard/" 
-room_url="https://www.douyu.com/"
-
 #邮件配置
 my_email="recv@xx.com"
 mail_sender="send@xx.com"
@@ -75,6 +71,8 @@ pccold_contact="\n\npccold by DKZ \n---------------------\ngithub:https://github
 - [streamlink](https://github.com/streamlink/streamlink)
 - [bypy](https://github.com/houtianze/bypy)
 - [psutil](https://github.com/giampaolo/psutil)
+- [websocket-clinet](https://github.com/websocket-client/websocket-client)
+- [pystt](https://github.com/dust8/pystt)
 
 
 
