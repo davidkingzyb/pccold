@@ -12,18 +12,6 @@ import logging
 import traceback
 from .config import conf
 
-#log set
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%m/%d %H:%M:%S',
-                filename=conf.log_path,
-                filemode='a')
-# console = logging.StreamHandler()
-# console.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(name)-12s: %(message)s')
-# console.setFormatter(formatter)
-# logging.getLogger('').addHandler(console)
-
 pidpool={}
 
 def sendEmails(room_obj):
@@ -126,7 +114,8 @@ def testRoomStatus():
 def initPcColdEmail(roomobj):
     global conf
     subj='[pccold]'+roomobj.get('room_name')+'@'+roomobj.get('nickname')
-    body='\nroom_name:'+roomobj.get('room_name')
+    body='\nenv:'+conf.env
+    body+='\nroom_name:'+roomobj.get('room_name')
     body+='\nowner_name:'+roomobj.get('owner_name')+'#'+str(roomobj.get('room_id'))
     t=time.localtime(roomobj.get('show_time'))
     start_time=time.strftime("%Y-%m-%d %H:%M:%S", t)

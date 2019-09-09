@@ -55,6 +55,7 @@ is_bypy_rm=false #上传百度云后删除
 download_path="/home/dkz/download" #录像保存路径
 videolist_path="/home/dkz/videolist.md" #批量下载斗鱼视频列表
 log_path="/home/dkz/pccold.log"
+env="dev"
 
 #邮件配置
 my_email="recv@xx.com"
@@ -63,6 +64,11 @@ mail_passwd="xxx"
 mail_host="xxx"
 mail_port=25 #exmail.qq 465 or 25
 pccold_contact="\n\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\ncontact:davidkingzyb@qq.com  @__DKZ__\naboutme:https://davidkingzyb.tech\n"
+
+#danmu
+username="visitor9986987"
+uid="1167614891"
+
 ```
 
 ## Dependence

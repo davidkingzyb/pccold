@@ -21,10 +21,10 @@ def psCheck(name):
 
 def initBypyRmEmail(body):
     global conf
-    subj='[pccold] bypyrm'
+    subj='[pccold] bypyrm '+body
     logging.info('[bypyrm] '+body)
     try:
-        sendEmail(subj,conf.my_email,body,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
+        sendEmail(subj,conf.my_email,body+'\n'+conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port)
     except Exception as e:
         logging.info('*** email fail',e)
 

@@ -6,6 +6,7 @@ import pystt
 import threading
 from .config import conf
 from .tail_call import tail_call_optimized
+from .tools import sendEmail
 
 class DouyuMsg(object):
 
@@ -49,10 +50,14 @@ class DouyuMsg(object):
         if self.obj.get('type')=='chatmsg':
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' : '+self.obj.get('txt','')
         elif self.obj.get('type')=='uenter':
+            if self.obj.get('uid','')=='498062' and str(conf.room_num)=='20360':
+                print('### PcCold Enter ###')
+                t=threading.Thread(target=sendEmail,args=('[pccold]PcCold Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+                t.start()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ uenter'
         elif self.obj.get('type')=='dgb':
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ dgb'+' @ '+self.obj.get('gfid')+' @ '+self.obj.get('gs')+' @ '+self.obj.get('gfcnt')
-        elif self.obj.get('type') in 'gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
+        elif self.obj.get('type') in 'frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
             return None
         else:
             print('*** '+self.obj.get('type')+' ***')
@@ -114,6 +119,8 @@ def mrkl(ws):
     }
     binary=DouyuMsg(req).getMessage()
     ws.send(binary)
+    now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
+    print(now_time)
     time.sleep(40)
     return mrkl(ws)
 
@@ -147,7 +154,7 @@ def on_open(ws):
 
 
 def wsdanmumain():
-    websocket.enableTrace(True)
+    # websocket.enableTrace(True)
     ws = websocket.WebSocketApp("wss://danmuproxy.douyu.com:8503/",
                               on_message = on_message,
                               on_error = on_error,

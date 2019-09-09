@@ -11,6 +11,18 @@ from .bypyrm import doBypy
 
 isinit=False
 
+#log set
+logging.basicConfig(level=logging.INFO,
+                format='%(asctime)s [line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%m/%d %H:%M:%S',
+                filename=conf.log_path,
+                filemode='a')
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(name)-12s: %(message)s')
+# console.setFormatter(formatter)
+# logging.getLogger('').addHandler(console)
+
 def getRoomObjList():
     global room_obj_list
     global isinit
