@@ -9,6 +9,28 @@ from .tail_call import tail_call_optimized
 from .tools import sendEmail
 
 luckystar=0
+keybody=''
+
+def chatMsgFillter(txt,uname,uid):
+    global keybody
+    keywordlist=conf.keyword.split(',')
+    for w in keywordlist:
+        if w in txt:
+            keybody+=uid+' @ '+uname+' : '+txt+'\n'
+    if uname==conf.keyuser or uid==conf.keyuid:
+        keybody+=uid+' @ '+uname+' : '+txt+'\n'
+    # ⭐ 🌟
+    global luckystar
+    if '⭐' in self.obj.get('txt','') or '🌟' in self.obj.get('txt',''):
+        if luckystar<5 and luckystar>=0:
+            luckystar+=1
+        elif luckystar>=5: 
+            luckystar=-1
+            print('### luckystar ###')
+            t=threading.Thread(target=sendEmail,args=('[pccold]Lucky Star',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+            t.start()
+
+
 
 class DouyuMsg(object):
 
@@ -50,26 +72,19 @@ class DouyuMsg(object):
 
     def getInfo(self):
         if self.obj.get('type')=='chatmsg':
-            # ⭐ 🌟
-            if '⭐' in self.obj.get('txt','') or '🌟' in self.obj.get('txt',''):
-                global luckystar
-                if luckystar<5 and luckystar>=0:
-                    luckystar+=1
-                elif luckystar>=5: 
-                    luckystar=-1
-                    print('### luckystar ###')
-                    t=threading.Thread(target=sendEmail,args=('[pccold]Lucky Star',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
-                    t.start()
+            chatMsgFillter(self.obj.get('txt',''),self.obj.get('nn',''),self.obj.get('uid',''))
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' : '+self.obj.get('txt','')
         elif self.obj.get('type')=='uenter':
-            if self.obj.get('uid','')=='498062' and str(conf.room_num)=='20360':
+            if self.obj.get('uid','')==conf.keyuid or self.obj.get('nn','')==conf.keyuser:
                 print('### PcCold Enter ###')
-                t=threading.Thread(target=sendEmail,args=('[pccold]PcCold Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+                t=threading.Thread(target=sendEmail,args=('[pccold]'+conf.keyuser+' Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
                 t.start()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ uenter'
         elif self.obj.get('type')=='rss':
-            t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+            global keybody
+            t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n\n\n'+keybody+'\n\n\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
             t.start()
+            keybody=''
             return '### Live ###'
         elif self.obj.get('type') in 'dgb,wiru,rankup,actfsts1od_r,frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,ghz2019s2info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
             return None
