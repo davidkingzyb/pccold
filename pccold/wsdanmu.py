@@ -8,6 +8,8 @@ from .config import conf
 from .tail_call import tail_call_optimized
 from .tools import sendEmail
 
+luckystar=0
+
 class DouyuMsg(object):
 
     def __init__(self,obj=None,content=None,message=None):
@@ -48,6 +50,16 @@ class DouyuMsg(object):
 
     def getInfo(self):
         if self.obj.get('type')=='chatmsg':
+            # ⭐ 🌟
+            if '⭐' in self.obj.get('txt','') or '🌟' in self.obj.get('txt',''):
+                global luckystar
+                if luckystar<5 and luckystar>=0:
+                    luckystar+=1
+                elif luckystar>=5: 
+                    luckystar=-1
+                    print('### luckystar ###')
+                    t=threading.Thread(target=sendEmail,args=('[pccold]Lucky Star',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+                    t.start()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' : '+self.obj.get('txt','')
         elif self.obj.get('type')=='uenter':
             if self.obj.get('uid','')=='498062' and str(conf.room_num)=='20360':
@@ -55,28 +67,18 @@ class DouyuMsg(object):
                 t=threading.Thread(target=sendEmail,args=('[pccold]PcCold Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
                 t.start()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ uenter'
-        elif self.obj.get('type')=='dgb':
-            return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ dgb'+' @ '+self.obj.get('gfid')+' @ '+self.obj.get('gs')+' @ '+self.obj.get('gfcnt')
-        elif self.obj.get('type') in 'frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
+        elif self.obj.get('type')=='rss':
+            t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+            t.start()
+            return '### Live ###'
+        elif self.obj.get('type') in 'dgb,wiru,rankup,actfsts1od_r,frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,ghz2019s2info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
             return None
         else:
             print('*** '+self.obj.get('type')+' ***')
-            return self.obj
+            return None
 
 
 def login(ws,room_id,username,uid):
-    # content='type@=loginreq/room_id@='+room_id+'/dfl@=sn@AA=105@ASss@AA=1/username@='+username+'/uid@='+uid+'/ver@=20190610/aver@=218101901/ct@=0/'
-    """
-00000000: 8b00 0000 8b00 0000 b102 0000 7479 7065  ............type
-00000001: 403d 6c6f 6769 6e72 6571 2f72 6f6f 6d69  @=loginreq/roomi
-00000002: 6440 3d39 3939 392f 6466 6c40 3d73 6e40  d@=9999/dfl@=sn@
-00000003: 4141 3d31 3035 4041 5373 7340 4141 3d31  AA=105@ASss@AA=1
-00000004: 2f75 7365 726e 616d 6540 3d76 6973 6974  /username@=visit
-00000005: 6f72 3939 3836 3938 372f 7569 6440 3d31  or9986987/uid@=1
-00000006: 3136 3736 3134 3839 312f 7665 7240 3d32  167614891/ver@=2
-00000007: 3031 3930 3631 302f 6176 6572 403d 3231  0190610/aver@=21
-00000008: 3831 3031 3930 312f 6374 403d 302f 00    8101901/ct@=0/.
-    """
     req={
         'type':'loginreq',
         'room_id':room_id,
@@ -92,12 +94,6 @@ def login(ws,room_id,username,uid):
     ws.send(binary)
 
 def join(ws,room_id):
-    # req='type@=joingroup/rid@='+room_id+'/gid@=1/'
-    """
-00000000: 2a00 0000 2a00 0000 b102 0000 7479 7065  *...*.......type
-00000001: 403d 6a6f 696e 6772 6f75 702f 7269 6440  @=joingroup/rid@
-00000002: 3d39 3939 392f 6769 6440 3d31 2f00       =9999/gid@=1/.    
-    """
     req={
         'type':'joingroup',
         'rid':room_id,
@@ -109,18 +105,18 @@ def join(ws,room_id):
 
 @tail_call_optimized
 def mrkl(ws):
-    """
-00000000: 1400 0000 1400 0000 b102 0000 7479 7065  ............type
-00000001: 403d 6d72 6b6c 2f00                      @=mrkl/.
-    """
-    # print('### mrkl ###')
+    global luckystar
+    luckystar=0
     req={
         'type':'mrkl'
     }
     binary=DouyuMsg(req).getMessage()
-    ws.send(binary)
-    now_time=time.strftime('_%m_%d_%H_%M',time.localtime(time.time()))
+    now_time=time.strftime('## %m_%d_%H_%M ##',time.localtime(time.time()))
     print(now_time)
+    try:
+        ws.send(binary)
+    except Exception as err:
+        print('** mrkl error **')
     time.sleep(40)
     return mrkl(ws)
 
@@ -135,7 +131,7 @@ def on_message(ws, message):
         if info:
             print(info)
     except Exception as err:
-        print('*** message parse err ***')
+        print('** message parse err **')
         print(message,err)
 
 def on_error(ws, error):
