@@ -21,7 +21,7 @@ def chatMsgFillter(txt,uname,uid):
         keybody+=uid+' @ '+uname+' : '+txt+'\n'
     # ⭐ 🌟
     global luckystar
-    if '⭐' in self.obj.get('txt','') or '🌟' in self.obj.get('txt',''):
+    if '⭐' in txt or '🌟' in txt:
         if luckystar<5 and luckystar>=0:
             luckystar+=1
         elif luckystar>=5: 
