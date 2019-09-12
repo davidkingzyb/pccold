@@ -130,10 +130,10 @@ def mrkl(ws):
     print(now_time)
     try:
         ws.send(binary)
+        time.sleep(40)
+        return mrkl(ws)
     except Exception as err:
         print('** mrkl error **')
-    time.sleep(40)
-    return mrkl(ws)
 
 
 def keepalive(ws):
