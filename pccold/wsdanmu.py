@@ -152,9 +152,10 @@ def on_message(ws, message):
 def on_error(ws, error):
     print(error)
 
+@tail_call_optimized
 def on_close(ws):
     print("### closed ###")
-    wsdanmumain()
+    return wsdanmumain()
 
 def on_open(ws):
     print('### open ###')
