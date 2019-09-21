@@ -152,7 +152,6 @@ def on_message(ws, message):
 def on_error(ws, error):
     print(error)
 
-@tail_call_optimized
 def on_close(ws):
     print("### closed ###")
     return wsdanmumain()
@@ -163,8 +162,7 @@ def on_open(ws):
     join(ws,str(conf.room_num))
     keepalive(ws)
 
-
-
+@tail_call_optimized
 def wsdanmumain():
     # websocket.enableTrace(True)
     ws = websocket.WebSocketApp("wss://danmuproxy.douyu.com:8503/",
