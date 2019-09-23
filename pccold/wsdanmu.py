@@ -86,7 +86,9 @@ class DouyuMsg(object):
             t.start()
             keybody=''
             return '### Live ###'
-        elif self.obj.get('type') in 'dgb,wiru,rankup,actfsts1od_r,frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,ghz2019s2info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
+        # elif self.obj.get('type') in 'loginres':
+        #     return self.obj
+        elif self.obj.get('type') in 'loginres,dgb,wiru,rankup,actfsts1od_r,frank,rri,svsnres,newblackres,fire_user,fire_start,tsboxb,ghz2019arkcalc,ghz2019s1info,ghz2019s2info,fire_real_user,gbroadcast,srres,spbc,ghz2019s2calc,upgrade,rquizisn,anbc,wirt,ghz2019s1disp,blab,cthn,rnewbc,noble_num_info,rank_change,mrkl,synexp,fswrank,ranklist,qausrespond':
             return None
         else:
             print('*** '+self.obj.get('type')+' ***')
@@ -104,7 +106,7 @@ def login(ws,room_id,username,uid):
         'aver':'218101901',
         'ct':'0'
     }
-    print('### login ###',req)
+    # print('### login ###',req)
     binary=DouyuMsg(req).getMessage()
     ws.send(binary)
 
@@ -114,7 +116,7 @@ def join(ws,room_id):
         'rid':room_id,
         'gid':'1'
     }
-    print('### join ###',req)
+    # print('### join ###',req)
     binary=DouyuMsg(req).getMessage()
     ws.send(binary)
 
@@ -130,10 +132,11 @@ def mrkl(ws):
     print(now_time)
     try:
         ws.send(binary)
-        time.sleep(40)
-        return mrkl(ws)
+        time.sleep(45)
     except Exception as err:
         print('** mrkl error **')
+        return None
+    return mrkl(ws)
 
 
 def keepalive(ws):
@@ -154,7 +157,8 @@ def on_error(ws, error):
 
 def on_close(ws):
     print("### closed ###")
-    return wsdanmumain()
+    t=threading.Thread(target=wsdanmumain)
+    t.start()
 
 def on_open(ws):
     print('### open ###')
@@ -162,7 +166,6 @@ def on_open(ws):
     join(ws,str(conf.room_num))
     keepalive(ws)
 
-@tail_call_optimized
 def wsdanmumain():
     # websocket.enableTrace(True)
     ws = websocket.WebSocketApp("wss://danmuproxy.douyu.com:8503/",
