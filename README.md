@@ -64,6 +64,7 @@ mail_passwd="xxx"
 mail_host="xxx"
 mail_port=25 #exmail.qq 465 or 25
 pccold_contact="\n\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\ncontact:davidkingzyb@qq.com  @__DKZ__\naboutme:https://davidkingzyb.tech\n"
+bypy_mail=true
 
 #弹幕配置
 username="visitor9986987" #弹幕登陆名

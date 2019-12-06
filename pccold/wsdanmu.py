@@ -10,25 +10,10 @@ from .tools import sendEmail
 
 luckystar=0
 keybody=''
+uenter_set=set()
+speaker_set=set()
 
-def chatMsgFillter(txt,uname,uid):
-    global keybody
-    keywordlist=conf.keyword.split(',')
-    for w in keywordlist:
-        if w in txt:
-            keybody+=uid+' @ '+uname+' : '+txt+'\n'
-    if uname==conf.keyuser or uid==conf.keyuid:
-        keybody+=uid+' @ '+uname+' : '+txt+'\n'
-    # ⭐ 🌟
-    global luckystar
-    if '⭐' in txt or '🌟' in txt:
-        if luckystar<5 and luckystar>=0:
-            luckystar+=1
-        elif luckystar>=5: 
-            luckystar=-1
-            print('### luckystar ###')
-            t=threading.Thread(target=sendEmail,args=('[pccold]Lucky Star',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
-            t.start()
+
 
 
 
@@ -72,19 +57,13 @@ class DouyuMsg(object):
 
     def getInfo(self):
         if self.obj.get('type')=='chatmsg':
-            chatMsgFillter(self.obj.get('txt',''),self.obj.get('nn',''),self.obj.get('uid',''))
+            self.chatMsgFillter()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' : '+self.obj.get('txt','')
         elif self.obj.get('type')=='uenter':
-            if self.obj.get('uid','')==conf.keyuid or self.obj.get('nn','')==conf.keyuser:
-                print('### PcCold Enter ###')
-                t=threading.Thread(target=sendEmail,args=('[pccold]'+conf.keyuser+' Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
-                t.start()
+            self.enterFillter()
             return self.obj.get('uid','')+' @ '+self.obj.get('nn','')+' @ uenter'
         elif self.obj.get('type')=='rss':
-            global keybody
-            t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n\n\n'+keybody+'\n\n\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
-            t.start()
-            keybody=''
+            self.onLive()
             return '### Live ###'
         # elif self.obj.get('type') in 'loginres':
         #     return self.obj
@@ -93,6 +72,49 @@ class DouyuMsg(object):
         else:
             print('*** '+self.obj.get('type')+' ***')
             return None
+
+    def onLive(self):
+        global keybody
+        global uenter_set
+        global speaker_set
+        keybody='\nenter:'+str(len(uenter_set))+'\nspeaker:'+str(len(speaker_set))+'\n\n'+keybody+'\n\n'+str(speaker_set)
+        t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n\n\n'+keybody+'\n\n\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+        t.start()
+        keybody=''
+        uenter_set=set()
+        speaker_set=set()
+
+    def enterFillter(self):
+        global uenter_set
+        uenter_set.add(self.obj.get('nn',''))
+        if self.obj.get('uid','')==conf.keyuid or self.obj.get('nn','')==conf.keyuser:
+            print('### PcCold Enter ###')
+            t=threading.Thread(target=sendEmail,args=('[pccold]'+conf.keyuser+' Enter',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+            t.start()
+
+    def chatMsgFillter(self):
+        global keybody
+        global speaker_set
+        txt=self.obj.get('txt','')
+        uname=self.obj.get('nn','')
+        uid=self.obj.get('uid','')
+        speaker_set.add(uname)
+        keywordlist=conf.keyword.split(',')
+        for w in keywordlist:
+            if w in txt:
+                keybody+=uid+' @ '+uname+' : '+txt+'\n'
+        if uname==conf.keyuser or uid==conf.keyuid:
+            keybody+=uid+' @ '+uname+' : '+txt+'\n'
+        # ⭐ 🌟
+        global luckystar
+        if '⭐' in txt or '🌟' in txt:
+            if luckystar<5 and luckystar>=0:
+                luckystar+=1
+            elif luckystar>=5: 
+                luckystar=-1
+                print('### luckystar ###')
+                t=threading.Thread(target=sendEmail,args=('[pccold]Lucky Star',conf.my_email,conf.env+'\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
+                t.start()
 
 
 def login(ws,room_id,username,uid):

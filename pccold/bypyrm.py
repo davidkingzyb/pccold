@@ -37,7 +37,8 @@ def bypyrm():
         if returncode==0:
             cmd='cd '+conf.download_path+';rm *.mp4'
             p=subprocess.Popen(cmd,shell=True)
-            initBypyRmEmail('ok')
+            if conf.bypy_mail:
+                initBypyRmEmail('ok')
         else:
             initBypyRmEmail('fail '+str(returncode))
     else:
