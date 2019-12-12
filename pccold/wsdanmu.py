@@ -77,9 +77,10 @@ class DouyuMsg(object):
         global keybody
         global uenter_set
         global speaker_set
-        keybody='\nenter:'+str(len(uenter_set))+'\nspeaker:'+str(len(speaker_set))+'\n\n'+keybody+'\n\n'+str(speaker_set)
+        keybody='\nenter:'+str(len(uenter_set))+'\nspeaker:'+str(len(speaker_set))+'\n\n'+keybody+'\n\n'
         t=threading.Thread(target=sendEmail,args=('[pccold]Live',conf.my_email,conf.env+'\n\n\n'+keybody+'\n\n\n'+conf.pccold_contact,conf.mail_sender,conf.mail_passwd,conf.mail_host,conf.mail_port,))
         t.start()
+        print(speaker_set)
         keybody=''
         uenter_set=set()
         speaker_set=set()
