@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.28',
+    version='0.29',
     packages=['pccold'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
