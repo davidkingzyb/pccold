@@ -18,42 +18,34 @@ speaker_set=set()
 
 
 class DouyuMsg(object):
+    """
+    解析与封装信息格式见斗鱼开放平台
+    https://open.douyu.com/source/api/63"""
+    def __init__(self,obj=None, message=None):
+        self.obj = obj
+        self.message = message
 
-    def __init__(self,obj=None,content=None,message=None):
-        if obj:
-            self.obj=obj
-            self.content=pystt.dumps(obj)
-            self.contentToMessage()  
-        if content:
-            self.content=content
-            self.contentToMessage()  
-        if message:
-            self.message=message
-            self.messageToContent()
-            self.contentToObj()
+    def objToMessage(self):
+        content = pystt.dumps(self.obj)
+        content_byte = bytes(content.encode('utf-8'))
+        content_length = len(content_byte) + 8 + 1
+        length_byte = int.to_bytes(content_length, length=4, byteorder='little')
+	  
+        magic = bytearray([0xb1, 0x02])
+        zero_byte = bytearray([0x00])
+        return length_byte + length_byte + magic + zero_byte + zero_byte + content_byte + zero_byte 
 
-    def contentToMessage(self):
-        self.length = bytearray([len(self.content) + 9, 0x00, 0x00, 0x00])
-        self.code = self.length
-        self.magic = bytearray([0xb1, 0x02, 0x00, 0x00])
-        self.contentb = bytes(self.content.encode("utf-8"))
-        self.end = bytearray([0x00])
-        self.message=bytes(self.length + self.code + self.magic + self.contentb + self.end)
-        return self.message 
-
-    def getMessage(self):
-        return self.message 
-
-    def messageToContent(self):
-        self.content=self.message[12:-1].decode(encoding='utf-8',errors='ignore')
-        return self.content
-
-    def contentToObj(self):
-        self.obj=pystt.loads(self.content)
-        return self.obj
-
-    def getObj(self):
-        return self.obj
+    def messageToInfos(self):
+        pos = 0
+        infos = [ ]
+        while pos < len(self.message):
+            content_length = int.from_bytes(self.message[pos: pos + 4], byteorder='little')
+            content = self.message[pos + 12: pos + 4 + content_length - 1].decode(encoding='utf-8', errors='ignore')
+            self.obj = pystt.loads(content)
+            infos.append(self.getInfo())
+            pos += (4 + content_length)
+        # print ("Receive {} messages".format(len(infos)))
+        return infos
 
     def getInfo(self):
         if self.obj.get('type')=='chatmsg':
@@ -130,7 +122,7 @@ def login(ws,room_id,username,uid):
         'ct':'0'
     }
     # print('### login ###',req)
-    binary=DouyuMsg(req).getMessage()
+    binary = DouyuMsg(req).objToMessage()
     ws.send(binary)
 
 def join(ws,room_id):
@@ -140,7 +132,7 @@ def join(ws,room_id):
         'gid':'1'
     }
     # print('### join ###',req)
-    binary=DouyuMsg(req).getMessage()
+    binary = DouyuMsg(req).objToMessage()
     ws.send(binary)
 
 @tail_call_optimized
@@ -150,7 +142,7 @@ def mrkl(ws):
     req={
         'type':'mrkl'
     }
-    binary=DouyuMsg(req).getMessage()
+    binary = DouyuMsg(req).objToMessage()
     now_time=time.strftime('## %m_%d_%H_%M ##',time.localtime(time.time()))
     print(now_time)
     try:
@@ -168,9 +160,9 @@ def keepalive(ws):
 
 def on_message(ws, message):
     try:
-        info=DouyuMsg(message=message).getInfo()
-        if info:
-            print(info)
+        for info in DouyuMsg(message=message).messageToInfos():
+            if info:
+                print(info)
     except Exception as err:
         print('** message parse err **')
         print(message,err)
