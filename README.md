@@ -1,11 +1,8 @@
 # pccold
 
-**douyu斗鱼 自动化工具 主播上线通知 & 视频自动录制 & 弹幕抓取 & 下载斗鱼视频**
+**douyu斗鱼 自动化工具 主播上线通知 & 视频自动录制 & 弹幕抓取**
 
-2019/2/19 by DKZ
-
-
-**streamlink无法下载直播的问题，请结合[pccold_puppeteer](https://github.com/davidkingzyb/pccold_puppeteer)使用**
+2020/3/3 by DKZ
 
 ## Install
 
@@ -32,6 +29,8 @@ or download source code
 
 ### 下载斗鱼视频
 
+**旧功能未更新**
+
 `$ pccoldvideo`
 
 编辑下载列表
@@ -44,18 +43,19 @@ or download source code
 `$ sudo vi /etc/pccold.conf`
 
 ```
-room_id="cold" #斗鱼房间ID
-room_num=20360 #斗鱼房间数字ID
-video_author="vJGdy0qrKwXy"
-stream_type="medium" #录像质量 source|medium|low
+room_id=20360 #斗鱼房间ID
+stream_type="550p" #录像质量
 is_cut=true #是否分段
 how_long=1800 #录像分段长度(秒)
 is_bypy=true #是否使用bypy上传百度云
 is_bypy_rm=false #上传百度云后删除
 download_path="/home/dkz/download" #录像保存路径
+log_path="/home/dkz/pccold.log"
+env="dev"
+
+#录像配置
+video_author="vJGdy0qrKwXy"
 videolist_path="/home/dkz/videolist.md" #批量下载斗鱼视频列表
-log_path="/home/dkz/pccold.log" #日志路径
-env="dev" #环境标记
 
 #邮件配置
 my_email="recv@xx.com"
@@ -63,7 +63,7 @@ mail_sender="send@xx.com"
 mail_passwd="xxx"
 mail_host="xxx"
 mail_port=25 #exmail.qq 465 or 25
-pccold_contact="\n\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\ncontact:davidkingzyb@qq.com  @__DKZ__\naboutme:https://davidkingzyb.tech\n"
+pccold_contact="\n\npccold by DKZ \n---------------------\ngithub:https://github.com/davidkingzyb/pccold\n"
 bypy_mail=true
 
 #弹幕配置
@@ -75,7 +75,7 @@ keyuid="498062" #关注用户ID
 
 ```
 
-## Dependence
+## Reference
 
 - python3
 - [streamlink](https://github.com/streamlink/streamlink)
@@ -83,6 +83,8 @@ keyuid="498062" #关注用户ID
 - [psutil](https://github.com/giampaolo/psutil)
 - [websocket-clinet](https://github.com/websocket-client/websocket-client)
 - [pystt](https://github.com/dust8/pystt)
+- PyExecJS
+- [real-url](https://github.com/wbt5/real-url/blob/master/douyu.py)
 
 
 

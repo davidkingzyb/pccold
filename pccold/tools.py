@@ -28,9 +28,9 @@ def sendEmails(room_obj):
 
 def saveStream(level,file_name,url):
     global conf
-    url=url or "https://www.douyu.com/"+str(conf.room_num)
+    url=url or "https://www.douyu.com/"+str(conf.room_id)
     logging.info('saveStream')
-    cmd='streamlink -o "'+conf.download_path+'/'+file_name+'" '+url+' '+level#+' &'
+    cmd='pccoldcli '+conf.download_path+'/'+file_name
     shell=subprocess.Popen(cmd,shell=True,preexec_fn=os.setsid)
     logging.info('save start pid='+str(shell.pid))
     logging.info('$ '+cmd)
@@ -104,7 +104,7 @@ class SleepKillerThread():
 def testRoomStatus():
     global conf
     try:
-        room_obj=requests.get("https://www.douyu.com/betard/"+str(conf.room_num),timeout=10).json()
+        room_obj=requests.get("https://www.douyu.com/betard/"+str(conf.room_id),timeout=10).json()
         result=room_obj.get('room',{'show_status':0})
         return result
     except Exception as e:

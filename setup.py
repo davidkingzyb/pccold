@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.29',
-    packages=['pccold'],
+    version='0.30',
+    packages=['pccold','plugins'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
     license='MIT',
@@ -16,12 +16,14 @@ setup(name='pccold',
         'bypy>=1.6.4',
         'psutil>=5.5.0',
         'pystt==0.2.2',
-        'websocket-client>=0.54.0'
+        'websocket-client>=0.54.0',
+        'PyExecJS>=1.5.1'
     ],
     scripts=['./bin/pccold',
     './bin/pccoldvideo',
     './bin/pccoldvideolist',
-    './bin/pccolddanmu']
+    './bin/pccolddanmu',
+    './bin/pccoldcli']
     )
 
 # $ python3 setup.py sdist

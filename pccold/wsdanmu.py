@@ -177,8 +177,8 @@ def on_close(ws):
 
 def on_open(ws):
     print('### open ###')
-    login(ws,str(conf.room_num),conf.username,conf.uid)
-    join(ws,str(conf.room_num))
+    login(ws,str(conf.room_id),conf.username,conf.uid)
+    join(ws,str(conf.room_id))
     keepalive(ws)
 
 def wsdanmumain():

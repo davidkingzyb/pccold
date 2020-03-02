@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import pccold
+import sys
+
+output=sys.argv[1]
+pccold.cli_main(output)
