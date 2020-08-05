@@ -48,8 +48,8 @@ def main():
     try:
         global is_live
         room_obj=testRoomStatus()
-        logging.info(room_obj.get('show_status'))
-        if room_obj.get('show_status')==1:
+        logging.info('show_status:'+str(room_obj.get('show_status'))+' videoLoop:'+str(room_obj.get('videoLoop')))
+        if room_obj.get('show_status')==1 and room_obj.get('videoLoop')==0:
             logging.info('live on')
             if not is_live:
                 is_live=True
