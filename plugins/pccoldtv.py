@@ -141,7 +141,7 @@ def get_url_from_js(rid):
         real_url = re.findall(r'live/({}[\d\w]*?)_'.format(rid), response)[0]
     except:
         real_url = '直播间未开播或不存在'
-    return "http://tx2play1.douyucdn.cn/live/" + real_url +"_"+conf.stream_type +".flv?uuid="
+    return "http://dyscdnali1.douyucdn.cn/live/" + real_url +"_"+conf.stream_type +".flv?uuid="
 
 # puppteer
 
