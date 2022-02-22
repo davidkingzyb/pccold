@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='pccold',
-    version='0.31',
+    version='0.32',
     packages=['pccold','plugins'],
     author='davidkingzyb',
     author_email='davidkingzyb@qq.com',
@@ -25,6 +25,10 @@ setup(name='pccold',
     './bin/pccolddanmu',
     './bin/pccoldcli']
     )
+
+# python setup.py build
+# python setup.py install
+
 
 # $ python3 setup.py sdist
 # $ python3 setup.py sdist bdist_wheel

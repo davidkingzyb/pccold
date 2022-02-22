@@ -3,4 +3,7 @@ import pccold
 import sys
 
 output=sys.argv[1]
-pccold.cli_main(output)
+if len(sys.argv)==3:
+	pccold.cli_main(output,sys.argv[2])
+else:
+	pccold.cli_main(output,None)

@@ -23,6 +23,9 @@ or download source code
 后台运行
 `$ nohup pccold &`
 
+命令行
+`$ pccoldcli ./download.mp4 20360`
+
 ### 弹幕抓取
 
 `$ pccolddanmu`
@@ -44,13 +47,13 @@ or download source code
 
 ```
 room_id=20360 #斗鱼房间ID
-stream_type="550p" #录像质量
+stream_type="550" #录像质量
 is_cut=true #是否分段
 how_long=1800 #录像分段长度(秒)
 is_bypy=true #是否使用bypy上传百度云
 is_bypy_rm=false #上传百度云后删除
-download_path="/home/dkz/download" #录像保存路径
-log_path="/home/dkz/pccold.log"
+download_path="/home/pi/download" #录像保存路径
+log_path="/home/pi/pccold.log"
 env="dev"
 
 #录像配置

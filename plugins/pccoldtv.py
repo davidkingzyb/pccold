@@ -117,7 +117,7 @@ class DouYu:
         params += '&cdn={}&rate={}'.format(cdn, rate)
         url = 'https://www.douyu.com/lapi/live/getH5Play/{}'.format(self.rid)
         res = self.s.post(url, params=params).json()
-        print(res)
+        # print(res)
 
         return res
 
@@ -133,14 +133,15 @@ class DouYu:
             #key = self.get_js()
             key = self.get_pc_js()
         real_url = {}
-        real_url["flv"] = "http://dyscdnali1.douyucdn.cn/live/{}_550.flv?uuid=".format(key)
+        real_url["flv"] = "http://dyscdnali1.douyucdn.cn/live/{}_".format(key)+conf.stream_type+".flv?uuid="
         real_url["x-p2p"] = "http://tx2play1.douyucdn.cn/live/{}.xs?uuid=".format(key)
         return real_url
 
-def getStream():
-    s=DouYu(conf.room_id)
+def getStream(room_id):
+    print('room id ',room_id)
+    s=DouYu(room_id)
     result=s.get_real_url()
-    print(result)
+    # print(result)
     return result.get('flv')
 
 
@@ -163,9 +164,14 @@ _url_re = re.compile(r"""
 
 
 class PcCold(Plugin):
+    room_id=conf.room_id
+
     @classmethod
     def can_handle_url(cls, url):
-        return url=='https://pccold'
+        s=url.split('?')
+        if len(s)==2:
+            PcCold.room_id=s[1]
+        return 'https://pccold' in url
         # return _url_re.match(url)
 
     @classmethod
@@ -175,7 +181,7 @@ class PcCold(Plugin):
         return Plugin.stream_weight(stream)
 
     def _get_streams(self):
-        rtmp_url=getStream() #room id
+        rtmp_url=getStream(PcCold.room_id) #room id
         print('###########',rtmp_url)
         if 'rtmp:' in rtmp_url:
             stream = RTMPStream(self.session, {

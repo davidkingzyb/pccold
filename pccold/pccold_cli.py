@@ -5,14 +5,17 @@ import os
 from .config import conf
 
 
-def cli_main(output):
+def cli_main(output,room_id):
 
     error_code = 0
     parser = cli.build_parser()
 
     cli.setup_args(parser, ignore_unknown=True)
     cli.args.output=output
-    cli.args.url='https://pccold'
+    if room_id:
+        cli.args.url='https://pccold?'+room_id
+    else:
+        cli.args.url='https://pccold'
     cli.args.stream=['default']
     # print(cli.args)
 
