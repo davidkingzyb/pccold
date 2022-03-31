@@ -134,7 +134,7 @@ class DouYu:
             #key = self.get_js()
             key = self.get_pc_js()
         real_url = {}
-        real_url["flv"] = "http://dyscdnali1.douyucdn.cn/live/{}_".format(key)+conf.stream_type+".flv?uuid="
+        real_url["flv"] = "http://dyscdnali1.douyucdn.cn/live/{}".format(key)+conf.stream_type+".flv?uuid="
         real_url["x-p2p"] = "http://tx2play1.douyucdn.cn/live/{}.xs?uuid=".format(key)
         return real_url
 
