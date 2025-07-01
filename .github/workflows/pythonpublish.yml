@@ -1,39 +1,28 @@
-name: Build and Release Clojure App
+name: Upload Python PackageAdd commentMore actions
 
 on:
-  push:
-    branches:
-      - master  # 或你希望触发 workflow 的分支
+  release:
+    types: [created]
+
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Leiningen
-        uses: DeLaGuardo/setup-clojure@11.0
-        with:
-          lein: latest
-
-      - name: Install rlwrap
-        run: sudo apt-get install -y rlwrap
-
-      - name: Build with Figwheel
-        run: rlwrap lein do clean, figwheel
-
-      - name: Create release archive
-        run: |
-          mkdir -p build
-          zip -r build/clojure-app.zip . -x ".git/*"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
-          files: build/clojure-app.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
