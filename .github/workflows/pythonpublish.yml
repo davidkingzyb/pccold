@@ -1,14 +1,12 @@
-name: Upload Python PackageAdd commentMore actions
+name: Upload Python Package
 
 on:
   release:
     types: [created]
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
