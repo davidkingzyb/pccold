@@ -12,7 +12,7 @@ setup(name='pccold',
     data_files = [('/etc', ['etc/pccold.conf'])],
     keywords="douyu pccold",
     install_requires=[
-        'streamlink==0.14.2',
+        'streamlink==8.4.0',
         'bypy>=1.6.4',
         'psutil>=5.5.0',
         'pystt==0.2.2',
